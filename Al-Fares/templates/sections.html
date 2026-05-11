@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Sections</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#46D5D4; --purple:#7378EC; --blue:#19A0E3;
+      --bg:#f8faff; --card:#ffffff; --text:#1a1a2e;
+      --subtext:#6b7280; --border:#e5e7eb;
+      --shadow:rgba(115,120,236,0.12); --input-bg:#f9fafb;
+      --sidebar-bg:#1a1a2e; --sidebar-text:rgba(255,255,255,0.6);
+      --sidebar-border:rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f1a; --card:#1a1a2e; --text:#f0f0f0;
+      --subtext:#9ca3af; --border:#2d2d44;
+      --shadow:rgba(70,213,212,0.10); --input-bg:#252540;
+      --sidebar-bg:#0a0a14; --sidebar-text:rgba(255,255,255,0.5);
+      --sidebar-border:rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins','Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; transition:all 0.3s; }
+    [dir="rtl"] body { font-family:'Cairo','Poppins',sans-serif; }
+
+    .sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    .sidebar-logo { display:flex; align-items:center; gap:12px; padding:0 24px 28px; border-bottom:1px solid var(--sidebar-border); }
+    .sidebar-logo img { width:44px; height:44px; border-radius:10px; background:white; padding:2px; object-fit:contain; }
+    .sidebar-logo h2 { font-size:18px; font-weight:700; color:white; }
+    .sidebar-logo h2 span { background:linear-gradient(135deg,var(--teal),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sidebar-menu { 
+  padding: 20px 12px; 
+  flex: 1; 
+  overflow-y: auto;
+}
+.sidebar-menu::-webkit-scrollbar { width: 4px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .menu-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; padding:0 12px; margin:16px 0 8px; }
+    .menu-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--sidebar-text); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
+    .menu-item:hover, .menu-item.active { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .menu-item .icon { font-size:18px; width:24px; text-align:center; }
+    .sidebar-footer { padding:16px 24px; border-top:1px solid var(--sidebar-border); }
+    .logout-btn { display:flex; align-items:center; gap:10px; color:var(--sidebar-text); font-size:13px; cursor:pointer; transition:color 0.2s; text-decoration:none; }
+    .logout-btn:hover { color:#ef4444; }
+
+    .main { margin-left:260px; flex:1; display:flex; flex-direction:column; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .topbar h1 { font-size:20px; font-weight:600; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .top-btn { background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:7px 14px; font-size:12px; font-weight:500; color:var(--text); cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .top-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .admin-badge { display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:6px 14px; font-size:13px; font-weight:500; }
+    .badge-dot { width:8px; height:8px; background:var(--teal); border-radius:50%; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding:32px; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .page-header h2 { font-size:24px; font-weight:700; }
+    .page-header p { font-size:13px; color:var(--subtext); margin-top:4px; }
+    .add-btn { background:linear-gradient(135deg,var(--teal),var(--blue)); color:white; border:none; border-radius:10px; padding:11px 20px; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+    .add-btn:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(25,160,227,0.3); }
+
+    .sections-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+      gap:20px;
+    }
+    .section-card {
+      background:var(--card); border-radius:18px; padding:24px;
+      border:1px solid var(--border); box-shadow:0 4px 20px var(--shadow);
+      transition:all 0.3s; position:relative; overflow:hidden;
+    }
+    .section-card::before {
+      content:''; position:absolute; top:0; left:0;
+      width:100%; height:4px;
+      background:linear-gradient(90deg,var(--teal),var(--purple),var(--blue));
+    }
+    .section-card:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 30px var(--shadow); }
+    .section-icon {
+      width:60px; height:60px;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      border-radius:16px; display:flex; align-items:center; justify-content:center;
+      font-size:30px; margin-bottom:14px;
+    }
+    .section-card h3 { font-size:18px; font-weight:700; margin-bottom:8px; }
+    .section-info {
+      font-size:13px; color:var(--subtext);
+      line-height:1.9; margin-bottom:16px;
+    }
+    .section-info strong { color:var(--text); }
+    .section-actions {
+      display:flex; gap:8px;
+      margin-top:16px; padding-top:16px;
+      border-top:1px solid var(--border);
+    }
+    .action-btn {
+      flex:1; background:var(--input-bg); border:1px solid var(--border);
+      border-radius:8px; padding:8px 12px; font-size:12px;
+      cursor:pointer; color:var(--subtext); font-family:inherit;
+      transition:all 0.2s; text-decoration:none; text-align:center;
+    }
+    .action-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .action-btn.del:hover { border-color:#ef4444; color:#ef4444; }
+
+    .empty-state {
+      grid-column:1/-1; text-align:center;
+      padding:60px 20px; color:var(--subtext);
+    }
+    .empty-state .icon { font-size:48px; margin-bottom:12px; }
+
+    .modal-overlay {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%; background:rgba(0,0,0,0.5);
+      backdrop-filter:blur(4px); z-index:1000;
+      justify-content:center; align-items:center; padding:20px;
+    }
+    .modal-overlay.show { display:flex; }
+    .modal {
+      background:var(--card); border-radius:20px; padding:32px;
+      width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+      animation:modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .modal-header h2 { font-size:18px; font-weight:700; }
+    .modal-close { background:var(--bg); border:1px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:16px; color:var(--subtext); }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:12px; font-weight:500; margin-bottom:6px; }
+    .form-group input, .form-group select { width:100%; padding:11px 14px; background:var(--input-bg); border:1.5px solid var(--border); border-radius:10px; font-size:13px; font-family:inherit; color:var(--text); outline:none; }
+    .form-group input:focus, .form-group select:focus { border-color:var(--teal); }
+    .modal-submit { width:100%; padding:13px; background:linear-gradient(135deg,var(--teal),var(--blue)); color:white; border:none; border-radius:10px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:8px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      <a class="menu-item" href="/admin">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/admin">
+        <span class="icon">👥</span> <span data-ar="المستخدمون" data-en="Users">Users</span>
+      </a>
+      <div class="menu-label" data-ar="الإدارة" data-en="Management">Management</div>
+      <a class="menu-item" href="/admin/subjects">
+        <span class="icon">📚</span> <span data-ar="المواد" data-en="Subjects">Subjects</span>
+      </a>
+      <a class="menu-item" href="/admin/classes">
+        <span class="icon">🏫</span> <span data-ar="الصفوف" data-en="Classes">Classes</span>
+      </a>
+      <a class="menu-item active" href="/admin/sections">
+        <span class="icon">🎯</span> <span data-ar="الشعب" data-en="Sections">Sections</span>
+      </a>
+      <a class="menu-item" href="/admin/news">
+        <span class="icon">📰</span> <span data-ar="الأخبار" data-en="News">News</span>
+      </a>
+      <a class="menu-item" href="/admin/reviews">
+        <span class="icon">⭐</span> <span data-ar="الآراء" data-en="Reviews">Reviews</span>
+      </a>
+      <div class="menu-label" data-ar="الذكاء الاصطناعي" data-en="Intelligence">Intelligence</div>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="توليد الجدول" data-en="Smart Timetable">Smart Timetable</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Sections Management</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="admin-badge">
+          <div class="badge-dot"></div>
+          🛡️ {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <h2 data-ar="🎯 إدارة الشعب" data-en="🎯 Sections Management">🎯 Sections Management</h2>
+          <p data-ar="إنشاء الشعب وربط المعلمين والمواد والقاعات" data-en="Create sections by linking teachers, subjects and classes">Create sections by linking teachers, subjects and classes</p>
+        </div>
+        <button class="add-btn" onclick="openAddModal()" data-ar="+ شعبة جديدة" data-en="+ Add Section">+ Add Section</button>
+      </div>
+
+      <div class="sections-grid">
+        {% for s in sections %}
+        <div class="section-card">
+          <div class="section-icon">🎯</div>
+          <h3>{{ s.Section_Name }}</h3>
+          <div class="section-info">
+            📚 <strong data-ar="المادة:" data-en="Subject:">Subject:</strong> {{ s.Subject_Name or 'N/A' }}<br>
+            👨‍🏫 <strong data-ar="المعلم:" data-en="Teacher:">Teacher:</strong> {{ s.Teacher_Name or 'N/A' }}<br>
+            🏫 <strong data-ar="القاعة:" data-en="Room:">Room:</strong> {{ s.Room_Number or 'N/A' }}
+          </div>
+          <div class="section-actions">
+            <a class="action-btn" href="/admin/section/{{ s.Section_ID }}">👥 Manage</a>
+            <a class="action-btn del" href="/admin/delete-section/{{ s.Section_ID }}" onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+          </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="icon">🎯</div>
+          <p data-ar="لا توجد شعب بعد. اضغط + لإنشاء شعبة" data-en="No sections yet. Click + to create one">No sections yet. Click + to create one</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 data-ar="➕ إضافة شعبة" data-en="➕ Add Section">➕ Add Section</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
+      </div>
+      <form method="POST" action="/admin/add-section">
+        <div class="form-group">
+          <label data-ar="اسم الشعبة" data-en="Section Name">Section Name</label>
+          <input type="text" name="section_name" required placeholder="e.g. Math-Section1">
+        </div>
+        <div class="form-group">
+          <label data-ar="المادة" data-en="Subject">Subject</label>
+          <select name="subject_id" required>
+            <option value="" disabled selected>-- Select Subject --</option>
+            {% for sub in subjects %}
+            <option value="{{ sub.Subject_ID }}">{{ sub.Subject_Name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="المعلم" data-en="Teacher">Teacher</label>
+          <select name="teacher_id" required>
+            <option value="" disabled selected>-- Select Teacher --</option>
+            {% for t in teachers %}
+            <option value="{{ t.Teacher_ID }}">{{ t.Full_Name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="القاعة" data-en="Class">Class</label>
+          <select name="class_id" required>
+            <option value="" disabled selected>-- Select Class --</option>
+            {% for c in classes %}
+            <option value="{{ c.Class_ID }}">{{ c.Room_Number }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+  <label data-ar="الجنس" data-en="Gender">Gender</label>
+  <select name="gender" required>
+    <option value="Male" data-ar="ذكور" data-en="Males">Males</option>
+    <option value="Female" data-ar="إناث" data-en="Females">Females</option>
+  </select>
+</div>
+<div class="form-group">
+  <label data-ar="الفترة" data-en="Period">Period</label>
+  <select name="period_type" required>
+    <option value="Morning" data-ar="صباحي (السبت فقط)" data-en="Morning (Saturday only)">Morning (Saturday only)</option>
+    <option value="Evening" data-ar="مسائي" data-en="Evening">Evening</option>
+  </select>
+</div>
+        <button type="submit" class="modal-submit" data-ar="إضافة" data-en="Create Section">Create Section</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('page-title').textContent = isArabic ? 'إدارة الشعب' : 'Sections Management';
+      document.getElementById('lang-btn').textContent   = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+    function openAddModal()  { document.getElementById('addModal').classList.add('show'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+  </script>
+
+</body>
+</html>

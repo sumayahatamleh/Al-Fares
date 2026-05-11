@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:    #46D5D4;
+      --purple:  #7378EC;
+      --blue:    #19A0E3;
+      --light:   #F0F0F0;
+      --bg:      #f8faff;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --subtext: #6b7280;
+      --border:  #e5e7eb;
+      --shadow:  rgba(115,120,236,0.15);
+      --input-bg:#f9fafb;
+    }
+    [data-theme="dark"] {
+      --bg:      #0f0f1a;
+      --card:    #1a1a2e;
+      --text:    #f0f0f0;
+      --subtext: #9ca3af;
+      --border:  #2d2d44;
+      --shadow:  rgba(70,213,212,0.15);
+      --input-bg:#252540;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .blob-1 { width:500px; height:500px; background:var(--teal);   top:-150px; left:-150px; animation-delay:0s; }
+    .blob-2 { width:400px; height:400px; background:var(--purple); bottom:-100px; right:-100px; animation-delay:3s; }
+    .blob-3 { width:300px; height:300px; background:var(--blue);   top:50%; left:50%; animation-delay:1.5s; }
+
+    @keyframes float {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(30px,-30px) scale(1.05); }
+    }
+
+    .top-buttons {
+      position: fixed;
+      top: 24px; right: 24px;
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .top-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px var(--shadow);
+      font-family: 'Poppins', sans-serif;
+    }
+    .top-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--shadow); }
+
+    .login-card {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 10;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px var(--shadow);
+      animation: slideUp 0.6s ease;
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(40px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .logo-icon {
+  width: 110px; height: 110px;
+  background: white;
+  border-radius: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 32px rgba(25,160,227,0.25);
+  animation: pulse 3s ease-in-out infinite;
+  overflow: hidden;
+  border: 2px solid var(--border);
+}
+.logo-icon img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+    .logo-icon img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 8px 24px rgba(25,160,227,0.35); }
+      50%      { box-shadow: 0 8px 40px rgba(70,213,212,0.55); }
+    }
+    .logo-area h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .logo-area h1 span {
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo-area p {
+      font-size: 13px;
+      color: var(--subtext);
+      margin-top: 4px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--subtext);
+    }
+    [dir="rtl"] .input-wrap .icon { left: auto; right: 14px; }
+    [dir="rtl"] .form-group input  { padding: 13px 42px 13px 14px; }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      transition: all 0.3s;
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(70,213,212,0.12);
+      background: var(--card);
+    }
+
+    .error-msg {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #ef4444;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn-login:hover::before { left: 100%; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(25,160,227,0.4); }
+    .btn-login:active { transform: translateY(0); }
+
+    .divider {
+      text-align: center;
+      margin: 28px 0 20px;
+      position: relative;
+      color: var(--subtext);
+      font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%; width: 38%;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; }
+
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
+    }
+    .role-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 6px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--subtext);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .role-chip:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: rgba(70,213,212,0.08);
+      transform: translateY(-2px);
+    }
+    .role-chip span { font-size: 20px; }
+
+    .card-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--subtext);
+    }
+    .card-footer strong {
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="top-buttons">
+    <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+    <button class="top-btn" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-text">Dark Mode</span>
+    </button>
+  </div>
+
+  <div class="login-card">
+
+    <div class="logo-area">
+      <div class="logo-icon">
+        <img src="/static/logo.png" alt="Al-Fares Logo">
+      </div>
+      <h1>Al-<span>Fares</span></h1>
+      <p id="subtitle">Adaptive Smart Learning Platform</p>
+    </div>
+
+    {% if error %}
+    <div class="error-msg">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+      <div class="form-group">
+        <label id="lbl-user">Username</label>
+        <div class="input-wrap">
+          <span class="icon">👤</span>
+          <input type="text" name="username" id="inp-user" placeholder="Enter your username" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label id="lbl-pass">Password</label>
+        <div class="input-wrap">
+          <span class="icon">🔒</span>
+          <input type="password" name="password" id="inp-pass" placeholder="Enter your password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-login" id="btn-signin">Sign In →</button>
+    </form>
+
+    <div class="divider" id="divider-text">Login as</div>
+
+    <div class="roles-grid">
+      <div class="role-chip" onclick="fillDemo('admin','admin123')">
+        <span>🛡️</span><span id="role-admin">Admin</span>
+      </div>
+      <div class="role-chip" onclick="fillDemo('teacher1','pass123')">
+        <span>📚</span><span id="role-teacher">Teacher</span>
+      </div>
+      <div class="role-chip" onclick="fillDemo('student1','pass123')">
+        <span>🎒</span><span id="role-student">Student</span>
+      </div>
+      
+    </div>
+
+    <div class="card-footer" id="footer-text">
+      <strong>Al-Fares</strong> © 2026 — Smart Education Platform
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+      document.getElementById('theme-text').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    }
+
+    function fillDemo(user, pass) {
+      document.querySelector('input[name="username"]').value = user;
+      document.querySelector('input[name="password"]').value = pass;
+    }
+
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar' : 'en');
+
+      if (isArabic) {
+        document.getElementById('subtitle').textContent    = 'منصة الفارس الذكية للتعليم';
+        document.getElementById('lbl-user').textContent   = 'اسم المستخدم';
+        document.getElementById('lbl-pass').textContent   = 'كلمة المرور';
+        document.getElementById('inp-user').placeholder   = 'أدخل اسم المستخدم';
+        document.getElementById('inp-pass').placeholder   = 'أدخل كلمة المرور';
+        document.getElementById('btn-signin').textContent = '← تسجيل الدخول';
+        document.getElementById('divider-text').textContent = 'تسجيل الدخول كـ';
+        document.getElementById('role-admin').textContent   = 'مدير';
+        document.getElementById('role-teacher').textContent = 'معلم';
+        document.getElementById('role-student').textContent = 'طالب';
+        document.getElementById('role-parent').textContent  = 'ولي أمر';
+        document.getElementById('footer-text').innerHTML   = '<strong>الفارس</strong> © 2026 — منصة التعليم الذكية';
+        document.getElementById('lang-btn').textContent    = '🌐 English';
+      } else {
+        document.getElementById('subtitle').textContent    = 'Adaptive Smart Learning Platform';
+        document.getElementById('lbl-user').textContent   = 'Username';
+        document.getElementById('lbl-pass').textContent   = 'Password';
+        document.getElementById('inp-user').placeholder   = 'Enter your username';
+        document.getElementById('inp-pass').placeholder   = 'Enter your password';
+        document.getElementById('btn-signin').textContent = 'Sign In →';
+        document.getElementById('divider-text').textContent = 'Login as';
+        document.getElementById('role-admin').textContent   = 'Admin';
+        document.getElementById('role-teacher').textContent = 'Teacher';
+        document.getElementById('role-student').textContent = 'Student';
+        document.getElementById('role-parent').textContent  = 'Parent';
+        document.getElementById('footer-text').innerHTML   = '<strong>Al-Fares</strong> © 2026 — Smart Education Platform';
+        document.getElementById('lang-btn').textContent    = '🌐 العربية';
+      }
+    }
+  </script>
+
+</body>
+</html>

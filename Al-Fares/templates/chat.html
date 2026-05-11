@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#46D5D4; --purple:#7378EC; --blue:#19A0E3;
+      --bg:#f8faff; --card:#ffffff; --text:#1a1a2e;
+      --subtext:#6b7280; --border:#e5e7eb;
+      --shadow:rgba(115,120,236,0.12); --input-bg:#f9fafb;
+      --sidebar-bg:#1a1a2e; --sidebar-text:rgba(255,255,255,0.6);
+      --sidebar-border:rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f1a; --card:#1a1a2e; --text:#f0f0f0;
+      --subtext:#9ca3af; --border:#2d2d44;
+      --shadow:rgba(70,213,212,0.10); --input-bg:#252540;
+      --sidebar-bg:#0a0a14; --sidebar-text:rgba(255,255,255,0.5);
+      --sidebar-border:rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins','Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; height:100vh; overflow:hidden; transition:all 0.3s; }
+    [dir="rtl"] body { font-family:'Cairo','Poppins',sans-serif; }
+
+    .sidebar { width:260px; background:var(--sidebar-bg); height:100vh; display:flex; flex-direction:column; padding:24px 0; position:fixed; top:0; left:0; z-index:100; border-right:1px solid var(--border); overflow-y:auto; }
+    .sidebar::-webkit-scrollbar { width:5px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+    .sidebar-logo { display:flex; align-items:center; gap:12px; padding:0 24px 28px; border-bottom:1px solid var(--sidebar-border); }
+    .sidebar-logo img { width:44px; height:44px; border-radius:10px; background:white; padding:2px; object-fit:contain; }
+    .sidebar-logo h2 { font-size:18px; font-weight:700; color:white; }
+    .sidebar-logo h2 span { background:linear-gradient(135deg,var(--teal),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sidebar-menu { padding:20px 12px; flex:1; }
+    .menu-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; padding:0 12px; margin:16px 0 8px; }
+    .menu-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--sidebar-text); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
+    .menu-item:hover, .menu-item.active { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .menu-item .icon { font-size:18px; width:24px; text-align:center; }
+    .sidebar-footer { padding:16px 24px; border-top:1px solid var(--sidebar-border); }
+    .logout-btn { display:flex; align-items:center; gap:10px; color:var(--sidebar-text); font-size:13px; cursor:pointer; transition:color 0.2s; text-decoration:none; }
+    .logout-btn:hover { color:#ef4444; }
+
+    .main { margin-left:260px; flex:1; display:flex; flex-direction:column; height:100vh; }
+
+    .chat-header {
+      background:var(--card); border-bottom:1px solid var(--border);
+      padding:16px 32px; display:flex; align-items:center; gap:14px;
+      flex-shrink:0;
+    }
+    .back-btn {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:10px; padding:8px 14px; font-size:13px;
+      color:var(--text); cursor:pointer; font-family:inherit;
+      text-decoration:none; transition:all 0.2s;
+    }
+    .back-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .chat-user-info { display:flex; align-items:center; gap:12px; flex:1; }
+    .chat-avatar {
+      width:46px; height:46px; border-radius:50%;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:700; font-size:16px;
+    }
+    .chat-user-info h3 { font-size:16px; font-weight:600; }
+    .chat-user-info .subtitle { font-size:12px; color:var(--subtext); }
+
+    .chat-area {
+      flex:1; overflow-y:auto; padding:24px 32px;
+      background:var(--bg);
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .chat-area::-webkit-scrollbar { width:6px; }
+    .chat-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:6px; }
+
+    .message {
+      max-width:60%;
+      padding:12px 16px; border-radius:18px;
+      font-size:14px; line-height:1.5;
+      animation:msgIn 0.3s ease;
+      word-wrap:break-word;
+    }
+    @keyframes msgIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+    .message.sent {
+      align-self:flex-end;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      color:white;
+      border-bottom-right-radius:6px;
+    }
+    .message.received {
+      align-self:flex-start;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-bottom-left-radius:6px;
+    }
+    .message-time {
+      font-size:10px; opacity:0.7;
+      margin-top:4px; display:block;
+    }
+
+    .empty-chat {
+      flex:1; display:flex; align-items:center; justify-content:center;
+      flex-direction:column; color:var(--subtext);
+    }
+    .empty-chat .icon { font-size:60px; margin-bottom:14px; }
+    .empty-chat h3 { font-size:16px; font-weight:600; margin-bottom:6px; color:var(--text); }
+    .empty-chat p { font-size:13px; }
+
+    .chat-input-area {
+      background:var(--card);
+      border-top:1px solid var(--border);
+      padding:16px 32px;
+      flex-shrink:0;
+    }
+    .chat-input-form {
+      display:flex; gap:10px; align-items:flex-end;
+    }
+    .chat-input-form textarea {
+      flex:1; padding:12px 16px;
+      background:var(--input-bg);
+      border:1.5px solid var(--border);
+      border-radius:14px;
+      font-size:14px; font-family:inherit;
+      color:var(--text); outline:none;
+      resize:none; max-height:120px;
+      transition:all 0.2s;
+    }
+    .chat-input-form textarea:focus {
+      border-color:var(--teal);
+      box-shadow:0 0 0 4px rgba(70,213,212,0.12);
+    }
+    .send-btn {
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      color:white; border:none; border-radius:14px;
+      padding:12px 22px; font-size:14px; font-weight:600;
+      font-family:inherit; cursor:pointer;
+      transition:all 0.3s;
+    }
+    .send-btn:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(25,160,227,0.3); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      {% if session.role == 'Teacher' %}
+      <a class="menu-item" href="/teacher">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/teacher">
+        <span class="icon">🎯</span> <span data-ar="شعبي" data-en="My Sections">My Sections</span>
+      </a>
+      <div class="menu-label" data-ar="الأنشطة" data-en="Activities">Activities</div>
+      <a class="menu-item active" href="/teacher/messages">
+        <span class="icon">💬</span> <span data-ar="الرسائل" data-en="Messages">Messages</span>
+      </a>
+      {% else %}
+      <a class="menu-item" href="/student">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/student">
+        <span class="icon">📚</span> <span data-ar="موادي" data-en="My Subjects">My Subjects</span>
+      </a>
+      <div class="menu-label" data-ar="الأنشطة" data-en="Activities">Activities</div>
+      <a class="menu-item active" href="/student/messages">
+        <span class="icon">💬</span> <span data-ar="الرسائل" data-en="Messages">Messages</span>
+      </a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <div class="chat-header">
+      <a href="{% if session.role == 'Teacher' %}/teacher/messages{% else %}/student/messages{% endif %}" class="back-btn">←</a>
+      <div class="chat-user-info">
+        <div class="chat-avatar">{{ other_user.Full_Name[0]|upper }}</div>
+        <div>
+          <h3>{{ other_user.Full_Name }}</h3>
+          <div class="subtitle">📚 {{ section.Subject_Name }} - {{ section.Section_Name }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-area" id="chat-area">
+      {% if messages %}
+        {% for m in messages %}
+        <div class="message {% if m.From_User_ID == current_user_id %}sent{% else %}received{% endif %}">
+          {{ m.Content }}
+          <span class="message-time">🕐 {{ m.Sent_At[11:16] }}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="empty-chat">
+        <div class="icon">💬</div>
+        <h3 data-ar="ابدأ المحادثة!" data-en="Start the conversation!">Start the conversation!</h3>
+        <p data-ar="أرسل رسالة لتبدأ" data-en="Send a message to begin">Send a message to begin</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="chat-input-area">
+      <form class="chat-input-form" method="POST" action="/send-message">
+        <input type="hidden" name="to_user_id" value="{{ other_user.User_ID }}">
+        <input type="hidden" name="section_id" value="{{ section.Section_ID }}">
+        <textarea name="content" rows="1" required placeholder="Type a message..." onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();this.form.submit();}"></textarea>
+        <button type="submit" class="send-btn">📨 Send</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    // Auto-scroll to bottom
+    const chatArea = document.getElementById('chat-area');
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    // Auto-resize textarea
+    const textarea = document.querySelector('textarea');
+    textarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+  </script>
+
+</body>
+</html>

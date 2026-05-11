@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Messages</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#46D5D4; --purple:#7378EC; --blue:#19A0E3;
+      --bg:#f8faff; --card:#ffffff; --text:#1a1a2e;
+      --subtext:#6b7280; --border:#e5e7eb;
+      --shadow:rgba(115,120,236,0.12); --input-bg:#f9fafb;
+      --sidebar-bg:#1a1a2e; --sidebar-text:rgba(255,255,255,0.6);
+      --sidebar-border:rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f1a; --card:#1a1a2e; --text:#f0f0f0;
+      --subtext:#9ca3af; --border:#2d2d44;
+      --shadow:rgba(70,213,212,0.10); --input-bg:#252540;
+      --sidebar-bg:#0a0a14; --sidebar-text:rgba(255,255,255,0.5);
+      --sidebar-border:rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins','Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; transition:all 0.3s; }
+    [dir="rtl"] body { font-family:'Cairo','Poppins',sans-serif; }
+
+    .sidebar { width:260px; background:var(--sidebar-bg); height:100vh; display:flex; flex-direction:column; padding:24px 0; position:fixed; top:0; left:0; z-index:100; border-right:1px solid var(--border); overflow-y:auto; }
+    .sidebar::-webkit-scrollbar { width:5px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+    .sidebar-logo { display:flex; align-items:center; gap:12px; padding:0 24px 28px; border-bottom:1px solid var(--sidebar-border); }
+    .sidebar-logo img { width:44px; height:44px; border-radius:10px; background:white; padding:2px; object-fit:contain; }
+    .sidebar-logo h2 { font-size:18px; font-weight:700; color:white; }
+    .sidebar-logo h2 span { background:linear-gradient(135deg,var(--teal),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sidebar-menu { padding:20px 12px; flex:1; }
+    .menu-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; padding:0 12px; margin:16px 0 8px; }
+    .menu-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--sidebar-text); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
+    .menu-item:hover, .menu-item.active { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .menu-item .icon { font-size:18px; width:24px; text-align:center; }
+    .sidebar-footer { padding:16px 24px; border-top:1px solid var(--sidebar-border); }
+    .logout-btn { display:flex; align-items:center; gap:10px; color:var(--sidebar-text); font-size:13px; cursor:pointer; transition:color 0.2s; text-decoration:none; }
+    .logout-btn:hover { color:#ef4444; }
+
+    .main { margin-left:260px; flex:1; display:flex; flex-direction:column; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .topbar h1 { font-size:20px; font-weight:600; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .top-btn { background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:7px 14px; font-size:12px; font-weight:500; color:var(--text); cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .top-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .user-badge { display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:6px 14px; font-size:13px; font-weight:500; }
+    .badge-dot { width:8px; height:8px; background:var(--teal); border-radius:50%; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding:32px; }
+    .page-header { margin-bottom:28px; }
+    .page-header h2 { font-size:24px; font-weight:700; margin-bottom:6px; }
+    .page-header p { font-size:13px; color:var(--subtext); }
+
+    .conversations-list {
+      background:var(--card); border-radius:16px;
+      border:1px solid var(--border); box-shadow:0 4px 20px var(--shadow);
+      overflow:hidden;
+    }
+    .conversation-item {
+      display:flex; align-items:center; gap:14px;
+      padding:18px 24px; border-bottom:1px solid var(--border);
+      transition:all 0.2s; cursor:pointer;
+      text-decoration:none; color:var(--text);
+    }
+    .conversation-item:last-child { border-bottom:none; }
+    .conversation-item:hover { background:var(--bg); }
+    .conv-avatar {
+      width:48px; height:48px; border-radius:50%;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:700; font-size:16px;
+      flex-shrink:0; position:relative;
+    }
+    .unread-dot {
+      position:absolute; top:0; right:0;
+      width:14px; height:14px; border-radius:50%;
+      background:#ef4444; color:white;
+      font-size:9px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      border:2px solid var(--card);
+    }
+    .conv-info { flex:1; min-width:0; }
+    .conv-info h4 { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .conv-info .last-msg {
+      font-size:13px; color:var(--subtext);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:400px;
+    }
+    .conv-meta { text-align:right; flex-shrink:0; }
+    .conv-meta .time { font-size:11px; color:var(--subtext); margin-bottom:4px; }
+    .conv-meta .subject {
+      display:inline-block; padding:3px 10px;
+      border-radius:50px; font-size:10px; font-weight:600;
+      background:rgba(70,213,212,0.12); color:var(--teal);
+    }
+
+    .empty-state {
+      text-align:center; padding:80px 20px;
+      color:var(--subtext);
+      background:var(--card); border-radius:16px;
+      border:1px solid var(--border);
+    }
+    .empty-state .icon { font-size:60px; margin-bottom:14px; }
+    .empty-state h3 { font-size:18px; font-weight:600; margin-bottom:6px; color:var(--text); }
+    .empty-state p { font-size:14px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      {% if user_role == 'Teacher' %}
+      <a class="menu-item" href="/teacher">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/teacher">
+        <span class="icon">🎯</span> <span data-ar="شعبي" data-en="My Sections">My Sections</span>
+      </a>
+      <div class="menu-label" data-ar="الأنشطة" data-en="Activities">Activities</div>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="جدولي" data-en="My Schedule">My Schedule</span>
+      </a>
+      <a class="menu-item active" href="/teacher/messages">
+        <span class="icon">💬</span> <span data-ar="الرسائل" data-en="Messages">Messages</span>
+      </a>
+      {% else %}
+      <a class="menu-item" href="/student">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/student">
+        <span class="icon">📚</span> <span data-ar="موادي" data-en="My Subjects">My Subjects</span>
+      </a>
+      <div class="menu-label" data-ar="الأنشطة" data-en="Activities">Activities</div>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="جدولي" data-en="My Schedule">My Schedule</span>
+      </a>
+      <a class="menu-item active" href="/student/messages">
+        <span class="icon">💬</span> <span data-ar="الرسائل" data-en="Messages">Messages</span>
+      </a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Messages</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="user-badge">
+          <div class="badge-dot"></div>
+          {% if user_role == 'Teacher' %}👨‍🏫{% else %}🎒{% endif %} {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h2 data-ar="💬 الرسائل" data-en="💬 Messages">💬 Messages</h2>
+        <p data-ar="جميع محادثاتك مع المعلمين والطلاب" data-en="All your conversations">All your conversations</p>
+      </div>
+
+      {% if conversations %}
+      <div class="conversations-list">
+        {% for c in conversations %}
+        <a class="conversation-item" href="/chat/{{ c.other_user_id }}/{{ c.Section_ID }}">
+          <div class="conv-avatar">
+            {{ c.other_user_name[0]|upper }}
+            {% if c.unread_count > 0 %}
+            <span class="unread-dot">{{ c.unread_count }}</span>
+            {% endif %}
+          </div>
+          <div class="conv-info">
+            <h4>{{ c.other_user_name }}</h4>
+            <div class="last-msg">{{ c.last_message }}</div>
+          </div>
+          <div class="conv-meta">
+            <div class="time">{{ c.last_message_time[:10] }}</div>
+            {% if c.Subject_Name %}
+            <span class="subject">📚 {{ c.Subject_Name }}</span>
+            {% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="icon">💬</div>
+        <h3 data-ar="لا توجد رسائل بعد" data-en="No messages yet">No messages yet</h3>
+        <p data-ar="ابدأ محادثة من صفحة المادة" data-en="Start a conversation from the subject page">Start a conversation from the subject page</p>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('lang-btn').textContent = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+  </script>
+
+</body>
+</html>

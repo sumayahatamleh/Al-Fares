@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | News Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:    #46D5D4;
+      --purple:  #7378EC;
+      --blue:    #19A0E3;
+      --bg:      #f8faff;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --subtext: #6b7280;
+      --border:  #e5e7eb;
+      --shadow:  rgba(115,120,236,0.12);
+      --input-bg:#f9fafb;
+      --sidebar-bg: #1a1a2e;
+      --sidebar-text: rgba(255,255,255,0.6);
+      --sidebar-border: rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:      #0f0f1a;
+      --card:    #1a1a2e;
+      --text:    #f0f0f0;
+      --subtext: #9ca3af;
+      --border:  #2d2d44;
+      --shadow:  rgba(70,213,212,0.10);
+      --input-bg:#252540;
+      --sidebar-bg: #0a0a14;
+      --sidebar-text: rgba(255,255,255,0.5);
+      --sidebar-border: rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      transition: all 0.3s;
+    }
+    [dir="rtl"] body { font-family: 'Cairo', 'Poppins', sans-serif; }
+
+    .sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+    .sidebar-logo img {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: white;
+      padding: 2px;
+      object-fit: contain;
+    }
+    .sidebar-logo h2 { font-size: 18px; font-weight: 700; color: white; }
+    .sidebar-logo h2 span {
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sidebar-menu { 
+  padding: 20px 12px; 
+  flex: 1; 
+  overflow-y: auto;
+}
+.sidebar-menu::-webkit-scrollbar { width: 4px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .menu-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 12px;
+      margin: 16px 0 8px;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      color: var(--sidebar-text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+      text-decoration: none;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: rgba(70,213,212,0.12);
+      color: var(--teal);
+    }
+    .menu-item .icon { font-size: 18px; width: 24px; text-align: center; }
+    .sidebar-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--sidebar-border);
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--sidebar-text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .logout-btn:hover { color: #ef4444; }
+
+    .main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; }
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar h1 { font-size: 20px; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .top-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .top-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding: 32px; }
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .page-header h2 { font-size: 24px; font-weight: 700; }
+    .page-header p { font-size: 13px; color: var(--subtext); margin-top: 4px; }
+    .add-btn {
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(25,160,227,0.3); }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .news-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+      transition: all 0.3s;
+    }
+    .news-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px var(--shadow); }
+    .news-tag {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .news-tag.job   { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .news-tag.news  { background: rgba(115,120,236,0.12); color: var(--purple); }
+    .news-tag.alert { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .news-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .news-card p { font-size: 13px; color: var(--subtext); line-height: 1.6; margin-bottom: 16px; }
+    .news-meta {
+      font-size: 11px;
+      color: var(--subtext);
+      margin-bottom: 14px;
+    }
+    .news-actions {
+      display: flex;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .action-btn {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--subtext);
+      font-family: inherit;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+    }
+    .action-btn.del:hover { border-color: #ef4444; color: #ef4444; }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--subtext);
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .modal-close {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--subtext);
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(70,213,212,0.12);
+    }
+    .modal-submit {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      <a class="menu-item" href="/admin">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/admin">
+        <span class="icon">👥</span> <span data-ar="المستخدمون" data-en="Users">Users</span>
+      </a>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="الجدول" data-en="Timetable">Timetable</span>
+      </a>
+      <div class="menu-label" data-ar="الإدارة" data-en="Management">Management</div>
+      <a class="menu-item" href="/admin/subjects">
+        <span class="icon">📚</span> <span data-ar="المواد" data-en="Subjects">Subjects</span>
+      </a>
+      <a class="menu-item" href="/admin/classes">
+        <span class="icon">🏫</span> <span data-ar="الصفوف" data-en="Classes">Classes</span>
+      </a>
+      <a class="menu-item active" href="/admin/news">
+        <span class="icon">📰</span> <span data-ar="الأخبار" data-en="News">News</span>
+      </a>
+      <a class="menu-item" href="/admin/reviews">
+  <span class="icon">⭐</span> <span data-ar="الآراء" data-en="Reviews">Reviews</span>
+</a>
+      
+      
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">News Management</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="admin-badge">
+          <div class="badge-dot"></div>
+          🛡️ {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <h2 data-ar="📰 إدارة الأخبار والإعلانات" data-en="📰 News & Announcements">📰 News & Announcements</h2>
+          <p data-ar="إضافة الأخبار والوظائف والإعلانات التي تظهر بالصفحة الرئيسية" data-en="Add news, jobs, and announcements shown on the home page">Add news, jobs, and announcements shown on the home page</p>
+        </div>
+        <button class="add-btn" onclick="openAddModal()" data-ar="+ إضافة خبر" data-en="+ Add News">+ Add News</button>
+      </div>
+
+      <div class="news-grid">
+        {% for n in news %}
+        <div class="news-card">
+          {% if n.Type == 'Job' %}
+            <span class="news-tag job">💼 Job Opening</span>
+          {% elif n.Type == 'Alert' %}
+            <span class="news-tag alert">🔔 Important</span>
+          {% else %}
+            <span class="news-tag news">📢 Announcement</span>
+          {% endif %}
+          <h3>{{ n.Title }}</h3>
+          <p>{{ n.Description }}</p>
+          <div class="news-meta">📅 {{ n.Date_Posted[:10] }}</div>
+          <div class="news-actions">
+            <a class="action-btn del" href="/admin/delete-news/{{ n.News_ID }}" onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+          </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="icon">📰</div>
+          <p data-ar="لا توجد أخبار بعد. اضغط على + لإضافة خبر جديد" data-en="No news yet. Click + to add news">No news yet. Click + to add news</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 data-ar="➕ إضافة خبر جديد" data-en="➕ Add News">➕ Add News</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
+      </div>
+      <form method="POST" action="/admin/add-news">
+        <div class="form-group">
+          <label data-ar="نوع الخبر" data-en="Type">Type</label>
+          <select name="type" required>
+            <option value="News">📢 Announcement</option>
+            <option value="Job">💼 Job Opening</option>
+            <option value="Alert">🔔 Important Alert</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="العنوان" data-en="Title">Title</label>
+          <input type="text" name="title" required placeholder="e.g. Math Teacher Needed">
+        </div>
+        <div class="form-group">
+          <label data-ar="الوصف" data-en="Description">Description</label>
+          <textarea name="description" required placeholder="Full description..."></textarea>
+        </div>
+        <button type="submit" class="modal-submit" data-ar="نشر" data-en="Publish">Publish</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('page-title').textContent = isArabic ? 'إدارة الأخبار' : 'News Management';
+      document.getElementById('lang-btn').textContent   = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+
+    function openAddModal()  { document.getElementById('addModal').classList.add('show'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+  </script>
+
+</body>
+</html>

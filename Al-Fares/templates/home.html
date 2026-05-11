@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | مركز الفارس للتدريب</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:    #46D5D4;
+      --purple:  #7378EC;
+      --blue:    #19A0E3;
+      --bg:      #f8faff;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --subtext: #6b7280;
+      --border:  #e5e7eb;
+      --shadow:  rgba(115,120,236,0.12);
+    }
+    [data-theme="dark"] {
+      --bg:      #0f0f1a;
+      --card:    #1a1a2e;
+      --text:    #f0f0f0;
+      --subtext: #9ca3af;
+      --border:  #2d2d44;
+      --shadow:  rgba(70,213,212,0.10);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s;
+      overflow-x: hidden;
+    }
+    [dir="rtl"] body { font-family: 'Cairo', 'Poppins', sans-serif; }
+
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 1000;
+    }
+    [data-theme="dark"] .navbar { background: rgba(15,15,26,0.85); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
+    .nav-logo img { width: 42px; height: 42px; border-radius: 10px; background: white; padding: 2px; object-fit: contain; }
+    .nav-logo span { background: linear-gradient(135deg, var(--teal), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      background: var(--card); border: 1px solid var(--border); border-radius: 50px;
+      padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--text);
+      cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .icon-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: white; border: none; border-radius: 50px; padding: 10px 22px;
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(25,160,227,0.4); }
+    .btn-outline {
+      background: transparent; border: 1.5px solid var(--border); color: var(--text);
+      border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block;
+    }
+    .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0 5%; }
+    .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: blur(3px) brightness(0.45); }
+    .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(70,213,212,0.3), rgba(115,120,236,0.3), rgba(25,160,227,0.4)); z-index: 2; }
+    .hero-content { position: relative; z-index: 5; text-align: center; max-width: 900px; color: white; animation: fadeUp 1s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+    .hero-logo { width: 130px; height: 130px; background: white; border-radius: 30px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 28px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: pulse 3s ease-in-out infinite; }
+    .hero-logo img { width: 100%; height: 100%; object-fit: contain; }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+    .hero-content .badge { display: inline-block; background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); color: white; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.25); }
+    .hero-content h1 { font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 22px; letter-spacing: -1.5px; text-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+    .hero-content h1 span { background: linear-gradient(135deg, var(--teal), var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-content p { font-size: 18px; line-height: 1.8; margin-bottom: 36px; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.95; }
+    .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero-buttons .btn-primary, .hero-buttons .btn-outline { padding: 16px 32px; font-size: 15px; }
+    .hero-buttons .btn-outline { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); color: white; border-color: rgba(255,255,255,0.4); }
+
+    /* Animated Stats */
+    .stats-section { padding: 60px 5%; background: var(--card); }
+    .stats-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .stat-box {
+      text-align: center; padding: 30px 20px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(70,213,212,0.05), rgba(115,120,236,0.05));
+      border: 1px solid var(--border); transition: all 0.3s;
+    }
+    .stat-box:hover { transform: translateY(-6px); box-shadow: 0 12px 30px var(--shadow); }
+    .stat-box .icon { font-size: 36px; margin-bottom: 12px; }
+    .stat-box .num {
+      font-size: 42px; font-weight: 800;
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    .stat-box p { font-size: 13px; color: var(--subtext); font-weight: 500; }
+
+    section { padding: 80px 5%; }
+    .section-title { text-align: center; max-width: 700px; margin: 0 auto 50px; }
+    .section-title .badge { display: inline-block; background: rgba(115,120,236,0.12); color: var(--purple); padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+    .section-title h2 { font-size: 38px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+    .section-title h2 span { background: linear-gradient(135deg, var(--teal), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .section-title p { font-size: 15px; color: var(--subtext); line-height: 1.7; }
+
+    .about-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .about-card { background: var(--card); border-radius: 20px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 24px var(--shadow); transition: all 0.3s; }
+    .about-card:hover { transform: translateY(-6px); border-color: var(--teal); box-shadow: 0 16px 40px var(--shadow); }
+    .about-card .icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 18px; }
+    .about-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .about-card p { font-size: 14px; color: var(--subtext); line-height: 1.7; }
+
+    .features { background: var(--card); border-radius: 32px; max-width: 1200px; margin: 0 auto; padding: 70px 5%; }
+    .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .feature { text-align: center; padding: 24px; }
+    .feature .icon { width: 64px; height: 64px; border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 16px; }
+    .feature:nth-child(1) .icon { background: rgba(70,213,212,0.12); }
+    .feature:nth-child(2) .icon { background: rgba(115,120,236,0.12); }
+    .feature:nth-child(3) .icon { background: rgba(25,160,227,0.12); }
+    .feature:nth-child(4) .icon { background: rgba(34,197,94,0.12); }
+    .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .feature p { font-size: 13px; color: var(--subtext); line-height: 1.7; }
+
+    /* Programs */
+    .programs-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .program-card {
+      background: var(--card); border-radius: 24px; padding: 40px 30px;
+      border: 1px solid var(--border); text-align: center;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .program-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--teal), var(--purple));
+    }
+    .program-card:hover { transform: translateY(-8px); border-color: var(--teal); box-shadow: 0 20px 40px var(--shadow); }
+    .program-card .icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      border-radius: 22px; display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 40px; margin-bottom: 20px;
+    }
+    .program-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+    .program-card p { font-size: 14px; color: var(--subtext); line-height: 1.7; }
+
+    .pricing { max-width: 1200px; margin: 0 auto; }
+    .offer-banner {
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      color: white; border-radius: 24px; padding: 32px;
+      text-align: center; margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .offer-banner::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 50%); animation: shine 4s linear infinite; }
+    @keyframes shine { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+    .offer-banner .tag { display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 14px; border-radius: 50px; font-size: 11px; font-weight: 700; margin-bottom: 12px; }
+    .offer-banner h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; position: relative; z-index: 2; }
+    .offer-banner p { font-size: 14px; opacity: 0.95; position: relative; z-index: 2; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .price-card { background: var(--card); border-radius: 24px; padding: 36px 28px; border: 1px solid var(--border); text-align: center; transition: all 0.3s; position: relative; }
+    .price-card.popular { border: 2px solid var(--teal); transform: scale(1.04); box-shadow: 0 20px 60px rgba(70,213,212,0.25); }
+    .price-card.popular::before { content: 'Most Popular'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--teal), var(--blue)); color: white; padding: 5px 16px; border-radius: 50px; font-size: 11px; font-weight: 700; }
+    .price-card:hover { transform: translateY(-6px); border-color: var(--teal); }
+    .price-card.popular:hover { transform: scale(1.04) translateY(-6px); }
+    .price-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .price-card .price { margin: 18px 0; }
+    .price-card .price .amount { font-size: 48px; font-weight: 800; background: linear-gradient(135deg, var(--teal), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .price-card .price .currency { font-size: 16px; color: var(--subtext); margin-right: 4px; }
+    .price-card .price .period { font-size: 13px; color: var(--subtext); display: block; margin-top: 4px; }
+    .price-card ul { list-style: none; margin: 24px 0; text-align: left; }
+    [dir="rtl"] .price-card ul { text-align: right; }
+    .price-card ul li { padding: 8px 0; font-size: 13px; color: var(--subtext); display: flex; align-items: center; gap: 8px; }
+    .price-card ul li::before { content: '✓'; color: var(--teal); font-weight: 700; font-size: 16px; }
+
+    /* Awards Gallery */
+    .awards-section {
+      background: linear-gradient(135deg, rgba(70,213,212,0.08), rgba(115,120,236,0.08));
+      border-radius: 32px; max-width: 1200px; margin: 0 auto; padding: 60px 50px;
+    }
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 240px 240px;
+      gap: 16px;
+    }
+    .award-item {
+      border-radius: 20px; overflow: hidden;
+      position: relative; cursor: pointer;
+      transition: all 0.4s;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .award-item:hover { transform: scale(1.03); box-shadow: 0 16px 40px var(--shadow); }
+    .award-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .award-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .award-item:hover img { transform: scale(1.08); }
+    .award-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      padding: 30px 20px 20px;
+      color: white;
+    }
+    .award-overlay .badge {
+      display: inline-block;
+      background: rgba(70,213,212,0.9);
+      color: white; padding: 4px 12px;
+      border-radius: 50px; font-size: 10px;
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .award-overlay h4 { font-size: 16px; font-weight: 700; }
+    .awards-cta {
+      text-align: center; margin-top: 30px;
+      font-size: 14px; color: var(--subtext);
+    }
+    .awards-cta a { color: var(--teal); font-weight: 600; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <img src="/static/logo.png" alt="Al-Fares">
+      <span>Al-Fares</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about" data-ar="عن المركز" data-en="About">About</a></li>
+      <li><a href="#programs" data-ar="برامجنا" data-en="Programs">Programs</a></li>
+      <li><a href="#pricing" data-ar="الأسعار" data-en="Pricing">Pricing</a></li>
+      <li><a href="#news" data-ar="الأخبار" data-en="News">News</a></li>
+      <li><a href="#awards" data-ar="المكافآت" data-en="Awards">Awards</a></li>
+      <li><a href="#testimonials" data-ar="الآراء" data-en="Reviews">Reviews</a></li>
+      <li><a href="#contact" data-ar="تواصل" data-en="Contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+      <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+      <a href="/login" class="btn-primary" data-ar="تسجيل الدخول" data-en="Sign In">Sign In</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="/static/home.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <img src="/static/logo.png" alt="Al-Fares Logo">
+      </div>
+      <span class="badge" data-ar="🎓 منذ 2003" data-en="🎓 Since 2003">🎓 Since 2003</span>
+      <h1 data-ar='مركز <span>الفارس</span> للتدريب والتعليم المتميز' data-en='<span>Al-Fares</span> Center for Excellence in Education'>
+        <span>Al-Fares</span> Center for Excellence in Education
+      </h1>
+      <p data-ar="مركز الفارس تأسس عام 2003 لمساندة الطلبة في مجال التعليم والتدريب لكافة المواد للصفوف الأساسية والثانوية بأحدث الأساليب التعليمية الذكية."
+         data-en="Al-Fares Center, founded in 2003, supports students across all subjects from primary to secondary levels with the latest smart teaching methods.">
+        Al-Fares Center, founded in 2003, supports students across all subjects from primary to secondary levels with the latest smart teaching methods.
+      </p>
+      <div class="hero-buttons">
+        <a href="/login" class="btn-primary" data-ar="ابدأ الآن →" data-en="Get Started →">Get Started →</a>
+        <a href="#about" class="btn-outline" data-ar="اعرف المزيد" data-en="Learn More">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Animated Stats -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="icon">🎓</div>
+        <div class="num counter" data-target="1250">0</div>
+        <p data-ar="طالب" data-en="Students">Students</p>
+      </div>
+      <div class="stat-box">
+        <div class="icon">👨‍🏫</div>
+        <div class="num counter" data-target="55">0</div>
+        <p data-ar="معلم خبير" data-en="Expert Teachers">Expert Teachers</p>
+      </div>
+      <div class="stat-box">
+        <div class="icon">👁️</div>
+        <div class="num counter" data-target="8500">0</div>
+        <p data-ar="زائر" data-en="Visitors">Visitors</p>
+      </div>
+      <div class="stat-box">
+        <div class="icon">⭐</div>
+        <div class="num counter" data-target="22">0</div>
+        <p data-ar="سنة خبرة" data-en="Years of Excellence">Years of Excellence</p>
+      </div>
+    </div>
+  </section>
+<!-- ABOUT -->
+  <section id="about">
+    <div class="section-title">
+      <span class="badge" data-ar="عن المركز" data-en="About">About</span>
+      <h2 data-ar='لماذا <span>الفارس</span>؟' data-en='Why <span>Al-Fares</span>?'>Why <span>Al-Fares</span>?</h2>
+      <p data-ar="نقدم تجربة تعليمية متكاملة تجمع بين الخبرة والتكنولوجيا الحديثة" data-en="A complete educational experience combining experience with modern technology">A complete educational experience combining experience with modern technology</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="icon">🎯</div>
+        <h3 data-ar="رؤيتنا" data-en="Our Vision">Our Vision</h3>
+        <p data-ar="أن نكون المركز الأول في مجال التعليم والتدريب من خلال تجربة ذكية ومتطورة." data-en="To be the leading center in education through a smart, advanced experience.">To be the leading center in education through a smart, advanced experience.</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🚀</div>
+        <h3 data-ar="رسالتنا" data-en="Our Mission">Our Mission</h3>
+        <p data-ar="مساندة الطلبة من الصف الأول حتى التوجيهي ودورات التأسيس بأعلى جودة." data-en="Supporting students from grade 1 to Tawjihi with foundation courses at the highest quality.">Supporting students from grade 1 to Tawjihi with foundation courses at the highest quality.</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">⭐</div>
+        <h3 data-ar="قيمنا" data-en="Our Values">Our Values</h3>
+        <p data-ar="الجودة، الالتزام، التطوير المستمر، والاهتمام بكل طالب." data-en="Quality, commitment, continuous development, and attention to every student.">Quality, commitment, continuous development, and attention to every student.</p>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- PROGRAMS -->
+  <section id="programs">
+    <div class="section-title">
+      <span class="badge" data-ar="برامجنا" data-en="Programs">Programs</span>
+      <h2 data-ar='<span>برامج</span> تعليمية متكاملة' data-en='Comprehensive <span>Programs</span>'>Comprehensive <span>Programs</span></h2>
+      <p data-ar="برامج مصممة لكل مرحلة دراسية بأفضل المعلمين" data-en="Programs designed for every educational stage with the best teachers">Programs designed for every educational stage with the best teachers</p>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="icon">📚</div>
+        <h3 data-ar="الصفوف الأساسية" data-en="Primary Grades">Primary Grades</h3>
+        <p data-ar="من الصف الأول حتى الأول ثانوي، تأسيس قوي ومتابعة متخصصة" data-en="From grade 1 to 11, strong foundation and specialized follow-up">From grade 1 to 6, strong foundation and specialized follow-up</p>
+      </div>
+      <div class="program-card">
+        <div class="icon">🎯</div>
+        <h3 data-ar="دورات التأسيس" data-en="Foundation Courses">Foundation Courses</h3>
+        <p data-ar="دورات مكثفة لبناء أساس قوي في المواد الأساسية" data-en="Intensive courses to build a strong foundation in core subjects">Intensive courses to build a strong foundation in core subjects</p>
+      </div>
+      <div class="program-card">
+        <div class="icon">🏆</div>
+        <h3 data-ar="التوجيهي" data-en="Tawjihi">Tawjihi</h3>
+        <p data-ar="تحضير شامل لطلاب التوجيهي بكافة الفروع والمواد" data-en="Comprehensive preparation for Tawjihi students in all branches">Comprehensive preparation for Tawjihi students in all branches</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-title">
+      <span class="badge" data-ar="الأسعار" data-en="Pricing">Pricing</span>
+      <h2 data-ar='أسعار <span>تنافسية</span>' data-en='<span>Affordable</span> Pricing'><span>Affordable</span> Pricing</h2>
+      <p data-ar="جودة عالية بأسعار مناسبة للجميع" data-en="High quality at prices suitable for everyone">High quality at prices suitable for everyone</p>
+    </div>
+    <div class="pricing">
+      <div class="offer-banner">
+        <span class="tag" data-ar="🔥 عرض محدود" data-en="🔥 LIMITED OFFER">🔥 LIMITED OFFER</span>
+        <h2 data-ar="سجّل مادتين واحصل على الثالثة مجاناً!" data-en="Register 2 subjects and get the 3rd FREE!">Register 2 subjects and get the 3rd FREE!</h2>
+        <p data-ar="عرض حصري لفترة محدودة" data-en="Exclusive offer for a limited time">Exclusive offer for a limited time</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3 data-ar="مادة واحدة" data-en="Single Subject">Single Subject</h3>
+          <div class="price">
+            <span class="amount">15</span>
+            <span class="currency" data-ar="د.أ" data-en="JOD">JOD</span>
+            <span class="period" data-ar="شهرياً" data-en="per month">per month</span>
+          </div>
+          <ul>
+            <li data-ar="حصص أسبوعية منتظمة" data-en="Regular weekly sessions">Regular weekly sessions</li>
+            <li data-ar="معلم متخصص" data-en="Specialized teacher">Specialized teacher</li>
+            <li data-ar="متابعة مستمرة" data-en="Continuous follow-up">Continuous follow-up</li>
+            <li data-ar="تقارير دورية" data-en="Periodic reports">Periodic reports</li>
+          </ul>
+          <a href="#contact" class="btn-primary" data-ar="سجل الآن" data-en="Register Now">Register Now</a>
+        </div>
+        <div class="price-card popular">
+          <h3 data-ar="باقة 3 مواد" data-en="3-Subject Bundle">3-Subject Bundle</h3>
+          <div class="price">
+            <span class="amount">30</span>
+            <span class="currency" data-ar="د.أ" data-en="JOD">JOD</span>
+            <span class="period" data-ar="شهرياً (وفّر 15!)" data-en="per month (Save 15!)">per month (Save 15!)</span>
+          </div>
+          <ul>
+            <li data-ar="3 مواد بسعر 2" data-en="3 subjects for the price of 2">3 subjects for the price of 2</li>
+            <li data-ar="معلمين متخصصين" data-en="Specialized teachers">Specialized teachers</li>
+            <li data-ar="جدول ذكي مرن" data-en="Flexible smart schedule">Flexible smart schedule</li>
+            <li data-ar="تقارير مفصلة" data-en="Detailed reports">Detailed reports</li>
+            <li data-ar="أولوية في الحجز" data-en="Booking priority">Booking priority</li>
+          </ul>
+          <a href="#contact" class="btn-primary" data-ar="استفد من العرض" data-en="Claim Offer">Claim Offer</a>
+        </div>
+        <div class="price-card">
+          <h3 data-ar="دورة تأسيس" data-en="Foundation Course">Foundation Course</h3>
+          <div class="price">
+            <span class="amount">25</span>
+            <span class="currency" data-ar="د.أ" data-en="JOD">JOD</span>
+            <span class="period" data-ar="شهرياً" data-en="per month">per month</span>
+          </div>
+          <ul>
+            <li data-ar="مناسبة للصفوف الأساسية" data-en="For primary grades">For primary grades</li>
+            <li data-ar="تقوية المهارات الأساسية" data-en="Foundation skills training">Foundation skills training</li>
+            <li data-ar="مجموعات صغيرة" data-en="Small groups">Small groups</li>
+            <li data-ar="متابعة فردية" data-en="Individual follow-up">Individual follow-up</li>
+          </ul>
+          <a href="#contact" class="btn-primary" data-ar="سجل الآن" data-en="Register Now">Register Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section id="news">
+    <div class="section-title">
+      <span class="badge" data-ar="الأخبار" data-en="News">News</span>
+      <h2 data-ar='آخر <span>الأخبار</span>' data-en='Latest <span>News</span>'>Latest <span>News</span></h2>
+      <p data-ar="أحدث إعلانات وأخبار المركز" data-en="Latest announcements and news from the center">Latest announcements and news from the center</p>
+    </div>
+    <style>
+      .news-section { background: var(--card); border-radius: 32px; max-width: 1200px; margin: 0 auto; padding: 60px 50px; }
+      .news-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .news-card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: all 0.3s; }
+      .news-card:hover { border-color: var(--purple); transform: translateY(-3px); }
+      .news-card .news-tag { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; margin-bottom: 12px; }
+      .news-card .news-tag.job { background: rgba(34,197,94,0.12); color: #22c55e; }
+      .news-card .news-tag.news { background: rgba(115,120,236,0.12); color: var(--purple); }
+      .news-card .news-tag.alert { background: rgba(239,68,68,0.12); color: #ef4444; }
+      .news-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+      .news-card p { font-size: 13px; color: var(--subtext); line-height: 1.6; margin-bottom: 12px; }
+      .news-card .news-meta { font-size: 11px; color: var(--subtext); }
+    </style>
+    <div class="news-section">
+      <div class="news-grid" id="news-container">
+        <p style="grid-column:1/-1; text-align:center; color:var(--subtext);">Loading...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS GALLERY -->
+  <section id="awards">
+    <div class="section-title">
+      <span class="badge" data-ar="المكافآت" data-en="Awards">Awards</span>
+      <h2 data-ar='<span>إنجازات</span> طلابنا' data-en='Our Students <span>Achievements</span>'>Our Students <span>Achievements</span></h2>
+      <p data-ar="نفخر بإنجازات وتميز طلابنا - كن جزءاً من قصص النجاح!" data-en="We're proud of our students' achievements - Be part of the success stories!">We're proud of our students' achievements - Be part of the success stories!</p>
+    </div>
+    <div class="awards-section">
+      <div class="awards-grid">
+        <div class="award-item">
+          <img src="/static/award1.jpg" alt="Award 1">
+          <div class="award-overlay">
+            <span class="badge">🏆 1st Place</span>
+            <h4 data-ar="أوائل التوجيهي 2025" data-en="Top Tawjihi 2025">Top Tawjihi 2025</h4>
+          </div>
+        </div>
+        <div class="award-item">
+          <img src="/static/award2.jpg" alt="Award 2">
+          <div class="award-overlay">
+            <span class="badge">⭐ Excellence</span>
+            <h4 data-ar="تفوق أكاديمي" data-en="Academic Excellence">Academic Excellence</h4>
+          </div>
+        </div>
+        <div class="award-item">
+          <img src="/static/award3.jpg" alt="Award 3">
+          <div class="award-overlay">
+            <span class="badge">🥇 Gold</span>
+            <h4 data-ar="مسابقة الرياضيات" data-en="Math Competition">Math Competition</h4>
+          </div>
+        </div>
+        <div class="award-item">
+          <img src="/static/award4.jpg" alt="Award 4">
+          <div class="award-overlay">
+            <span class="badge">🎖️ Honor</span>
+            <h4 data-ar="شهادة تكريم" data-en="Honor Certificate">Honor Certificate</h4>
+          </div>
+        </div>
+        <div class="award-item">
+          <img src="/static/award5.jpg" alt="Award 5">
+          <div class="award-overlay">
+            <span class="badge">🏅 Top</span>
+            <h4 data-ar="أفضل طالب" data-en="Best Student">Best Student</h4>
+          </div>
+        </div>
+      </div>
+      <p class="awards-cta" data-ar='كن أنت القصة القادمة! <a href="/login">انضم إلينا</a>' data-en='Be the next success story! <a href="/login">Join us</a>'>
+        Be the next success story! <a href="#contact">Join us</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="section-title">
+      <span class="badge" data-ar="الآراء" data-en="Reviews">Reviews</span>
+      <h2 data-ar='ماذا يقول <span>طلابنا</span>؟' data-en='What Our <span>Students</span> Say'>What Our <span>Students</span> Say</h2>
+      <p data-ar="آراء حقيقية من طلابنا وأولياء أمورهم" data-en="Real reviews from our students and parents">Real reviews from our students and parents</p>
+    </div>
+    <style>
+      .testimonials-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+      .testimonial { background: var(--card); border-radius: 18px; padding: 26px; border: 1px solid var(--border); box-shadow: 0 4px 20px var(--shadow); transition: all 0.3s; position: relative; }
+      .testimonial:hover { transform: translateY(-4px); }
+      .testimonial::before { content: '"'; position: absolute; top: 10px; right: 20px; font-size: 60px; color: var(--teal); opacity: 0.2; line-height: 1; font-family: Georgia, serif; }
+      .testimonial .stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; }
+      .testimonial p { font-size: 13px; color: var(--subtext); line-height: 1.7; margin-bottom: 16px; }
+      .testimonial-user { display: flex; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid var(--border); }
+      .testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--teal), var(--blue)); }
+      .testimonial-user h4 { font-size: 13px; font-weight: 600; }
+      .testimonial-user span { font-size: 11px; color: var(--subtext); }
+      .review-form-section { max-width: 700px; margin: 50px auto 0; background: var(--card); border-radius: 24px; padding: 36px; border: 1px solid var(--border); box-shadow: 0 4px 24px var(--shadow); }
+      .review-form-section h3 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+      .review-form-section h3 span { background: linear-gradient(135deg, var(--teal), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .review-form-section .subtitle { text-align: center; color: var(--subtext); font-size: 13px; margin-bottom: 24px; }
+      .review-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+      .form-group { margin-bottom: 14px; }
+      .form-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
+      .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: all 0.2s; }
+      .form-group textarea { resize: vertical; min-height: 90px; }
+      .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(70,213,212,0.12); }
+      .star-rating { display: flex; gap: 8px; justify-content: center; margin: 16px 0 20px; direction: rtl; }
+      .star-rating input { display: none; }
+      .star-rating label { font-size: 38px; cursor: pointer; color: var(--border); transition: color 0.2s; }
+      .star-rating label:hover, .star-rating label:hover ~ label, .star-rating input:checked ~ label { color: #f59e0b; }
+      .submit-review-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--teal), var(--blue)); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.3s; }
+      .submit-review-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(25,160,227,0.4); }
+      .success-msg { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #22c55e; padding: 12px; border-radius: 10px; font-size: 13px; text-align: center; margin-bottom: 14px; display: none; }
+      .success-msg.show { display: block; }
+    </style>
+    <div class="testimonials-grid" id="reviews-container">
+      <p style="grid-column:1/-1; text-align:center; color:var(--subtext);">Loading...</p>
+    </div>
+
+    <div class="review-form-section">
+      <h3 data-ar='شاركنا <span>رأيك</span>' data-en='Share Your <span>Review</span>'>Share Your <span>Review</span></h3>
+      <p class="subtitle" data-ar="رأيك يهمنا، قيّم تجربتك معنا" data-en="Your opinion matters, rate your experience">Your opinion matters, rate your experience</p>
+      <div class="success-msg" id="success-msg" data-ar="✓ تم نشر تقييمك بنجاح!" data-en="✓ Review submitted successfully!">✓ Review submitted successfully!</div>
+      <form id="reviewForm">
+        <div class="review-form-row">
+          <div class="form-group">
+            <label data-ar="الاسم" data-en="Name">Name</label>
+            <input type="text" name="full_name" required>
+          </div>
+          <div class="form-group">
+            <label data-ar="الصفة" data-en="Role">Role</label>
+            <select name="role" required>
+              <option value="Student">Student</option>
+              <option value="Parent">Parent</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Visitor">Visitor</option>
+            </select>
+          </div>
+        </div>
+        <label style="text-align:center; display:block;" data-ar="تقييمك" data-en="Your Rating">Your Rating</label>
+        <div class="star-rating">
+          <input type="radio" id="s5" name="rating" value="5" required><label for="s5">★</label>
+          <input type="radio" id="s4" name="rating" value="4"><label for="s4">★</label>
+          <input type="radio" id="s3" name="rating" value="3"><label for="s3">★</label>
+          <input type="radio" id="s2" name="rating" value="2"><label for="s2">★</label>
+          <input type="radio" id="s1" name="rating" value="1"><label for="s1">★</label>
+        </div>
+        <div class="form-group">
+          <label data-ar="رأيك" data-en="Your Comment">Your Comment</label>
+          <textarea name="comment" required placeholder="Share your experience..."></textarea>
+        </div>
+        <button type="submit" class="submit-review-btn" data-ar="نشر التقييم" data-en="Submit Review">Submit Review</button>
+      </form>
+    </div>
+  </section>
+<!-- CONTACT -->
+  <section id="contact">
+  <div class="section-title">
+  <span class="badge" data-ar="سجل الآن" data-en="Register">Register</span>
+  <h2 data-ar='انضم لعائلة <span>الفارس</span>' data-en='Join the <span>Al-Fares</span> Family'>Join the <span>Al-Fares</span> Family</h2>
+  <p data-ar="سجل عن طريق الاتصال بنا — نحن هنا لمساعدتك" data-en="Register by calling us — We're here to help">Register by calling us — We're here to help</p>
+</div>
+    <style>
+      .contact { max-width: 1000px; margin: 0 auto; }
+      .contact-card { background: var(--card); border-radius: 24px; padding: 50px; border: 1px solid var(--border); box-shadow: 0 4px 30px var(--shadow); display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+      .contact-item { text-align: center; }
+      .contact-item .icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 14px; }
+      .contact-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+      .contact-item p { font-size: 13px; color: var(--subtext); line-height: 1.6; }
+      footer { background: #0a0a14; color: rgba(255,255,255,0.7); padding: 50px 5% 24px; margin-top: 80px; }
+      .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+      .footer-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+      .footer-logo img { width: 48px; height: 48px; border-radius: 10px; background: white; padding: 2px; object-fit: contain; }
+      .footer-logo h3 { color: white; font-size: 18px; }
+      .footer-logo h3 span { background: linear-gradient(135deg, var(--teal), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      footer p { font-size: 13px; line-height: 1.8; max-width: 380px; }
+      footer h4 { color: white; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+      footer ul { list-style: none; }
+      footer ul li { margin-bottom: 8px; }
+      footer ul li a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+      footer ul li a:hover { color: var(--teal); }
+      .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 12px; }
+
+      @media (max-width: 900px) {
+        .hero-content h1 { font-size: 38px; }
+        .nav-links { display: none; }
+        .stats-grid, .about-grid, .features-grid, .pricing-grid,
+        .programs-grid, .news-grid, .testimonials-grid,
+        .contact-card, .footer-content, .review-form-row,
+        .awards-grid { grid-template-columns: 1fr; }
+        .award-item:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+      }
+    </style>
+    <div class="contact">
+      <div class="contact-card">
+        <div class="contact-item">
+          <div class="icon">📍</div>
+          <h4 data-ar="العنوان" data-en="Address">Address</h4>
+          <p data-ar="إربد - الحصن" data-en="Irbid - Al-Husn">Irbid - Al-Husn</p>
+        </div>
+        <div class="contact-item">
+          <div class="icon">📞</div>
+          <h4 data-ar="الهاتف" data-en="Phone">Phone</h4>
+          <p>0781100298</p>
+        </div>
+        <div class="contact-item">
+          <div class="icon">⏰</div>
+          <h4 data-ar="ساعات العمل" data-en="Working Hours">Working Hours</h4>
+          <p data-ar="السبت - الخميس | 9 ص - 8 م" data-en="Sat - Thu | 9 AM - 8 PM">Sat - Thu | 9 AM - 8 PM</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div>
+        <div class="footer-logo">
+          <img src="/static/logo.png" alt="logo">
+          <h3>Al-<span>Fares</span></h3>
+        </div>
+        <p data-ar="مركز الفارس للتدريب والتعليم المتميز - نخدم الطلبة منذ 2003." data-en="Al-Fares Center for Training and Excellence in Education — serving students since 2003.">Al-Fares Center for Training and Excellence in Education — serving students since 2003.</p>
+      </div>
+      <div>
+        <h4 data-ar="روابط سريعة" data-en="Quick Links">Quick Links</h4>
+        <ul>
+          <li><a href="#about" data-ar="عن المركز" data-en="About">About</a></li>
+          <li><a href="#programs" data-ar="برامجنا" data-en="Programs">Programs</a></li>
+          <li><a href="#pricing" data-ar="الأسعار" data-en="Pricing">Pricing</a></li>
+          <li><a href="#awards" data-ar="المكافآت" data-en="Awards">Awards</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-ar="الحساب" data-en="Account">Account</h4>
+        <ul>
+          <li><a href="/login" data-ar="تسجيل الدخول" data-en="Sign In">Sign In</a></li>
+          <li><a href="#contact" data-ar="تواصل" data-en="Contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 <strong style="color:white;">Al-Fares</strong> — <span data-ar="جميع الحقوق محفوظة" data-en="All rights reserved">All rights reserved</span></p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.innerHTML = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('lang-btn').textContent = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Animated Counter
+    function animateCounter(el) {
+      const target = parseInt(el.getAttribute('data-target'));
+      const duration = 2000;
+      const start = performance.now();
+      function update(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const value = Math.floor(progress * target);
+        el.textContent = value.toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target.toLocaleString();
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Trigger counters when section appears
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+    // Load News
+    function loadNews() {
+      fetch('/get-news')
+        .then(r => r.json())
+        .then(news => {
+          const container = document.getElementById('news-container');
+          if (news.length === 0) {
+            container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--subtext);">No news yet</p>';
+            return;
+          }
+          container.innerHTML = news.map(n => {
+            let tag = 'news', label = '📢 Announcement';
+            if (n.Type === 'Job')   { tag = 'job';   label = '💼 Job Opening'; }
+            if (n.Type === 'Alert') { tag = 'alert'; label = '🔔 Important'; }
+            return `
+              <div class="news-card">
+                <span class="news-tag ${tag}">${label}</span>
+                <h3>${n.Title}</h3>
+                <p>${n.Description}</p>
+                <div class="news-meta">📅 ${n.Date_Posted.substring(0,10)}</div>
+              </div>
+            `;
+          }).join('');
+        })
+        .catch(err => console.log('News error:', err));
+    }
+
+    // Load Reviews
+    function loadReviews() {
+      fetch('/get-reviews')
+        .then(r => r.json())
+        .then(reviews => {
+          const container = document.getElementById('reviews-container');
+          if (reviews.length === 0) {
+            container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--subtext);">Be the first to review!</p>';
+            return;
+          }
+          container.innerHTML = reviews.map(r => {
+            const stars = '★'.repeat(r.Rating) + '☆'.repeat(5 - r.Rating);
+            const initial = r.Full_Name.charAt(0).toUpperCase();
+            return `
+              <div class="testimonial">
+                <div class="stars">${stars}</div>
+                <p>${r.Comment}</p>
+                <div class="testimonial-user">
+                  <div class="testimonial-avatar">${initial}</div>
+                  <div>
+                    <h4>${r.Full_Name}</h4>
+                    <span>${r.Role}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        })
+        .catch(err => console.log('Reviews error:', err));
+    }
+
+    // Submit Review
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      fetch('/add-review', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('success-msg').classList.add('show');
+            this.reset();
+            setTimeout(() => {
+              document.getElementById('success-msg').classList.remove('show');
+            }, 3000);
+            loadReviews();
+          }
+        });
+    });
+
+    loadNews();
+    loadReviews();
+  </script>
+
+</body>
+</html>

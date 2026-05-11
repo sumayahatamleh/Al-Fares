@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:    #46D5D4;
+      --purple:  #7378EC;
+      --blue:    #19A0E3;
+      --bg:      #f8faff;
+      --card:    #ffffff;
+      --text:    #1a1a2e;
+      --subtext: #6b7280;
+      --border:  #e5e7eb;
+      --shadow:  rgba(115,120,236,0.12);
+      --input-bg:#f9fafb;
+      --sidebar-bg: #1a1a2e;
+      --sidebar-text: rgba(255,255,255,0.6);
+      --sidebar-border: rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:      #0f0f1a;
+      --card:    #1a1a2e;
+      --text:    #f0f0f0;
+      --subtext: #9ca3af;
+      --border:  #2d2d44;
+      --shadow:  rgba(70,213,212,0.10);
+      --input-bg:#252540;
+      --sidebar-bg: #0a0a14;
+      --sidebar-text: rgba(255,255,255,0.5);
+      --sidebar-border: rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      transition: all 0.3s;
+    }
+    [dir="rtl"] body { font-family: 'Cairo', 'Poppins', sans-serif; }
+
+    .sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+    .sidebar-logo img {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: white;
+      padding: 2px;
+      object-fit: contain;
+    }
+    .sidebar-logo h2 { font-size: 18px; font-weight: 700; color: white; }
+    .sidebar-logo h2 span {
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sidebar-menu { 
+  padding: 20px 12px; 
+  flex: 1; 
+  overflow-y: auto;
+}
+.sidebar-menu::-webkit-scrollbar { width: 4px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .menu-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 12px;
+      margin: 16px 0 8px;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      color: var(--sidebar-text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+      text-decoration: none;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: rgba(70,213,212,0.12);
+      color: var(--teal);
+    }
+    .menu-item .icon { font-size: 18px; width: 24px; text-align: center; }
+    .sidebar-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--sidebar-border);
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--sidebar-text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .logout-btn:hover { color: #ef4444; }
+
+    .main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; }
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar h1 { font-size: 20px; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .top-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .top-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding: 32px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .stat-icon.teal   { background: rgba(70,213,212,0.12); }
+    .stat-icon.purple { background: rgba(115,120,236,0.12); }
+    .stat-icon.blue   { background: rgba(25,160,227,0.12); }
+    .stat-icon.green  { background: rgba(34,197,94,0.12); }
+    .stat-info p { font-size: 12px; color: var(--subtext); margin-bottom: 4px; }
+    .stat-info h3 { font-size: 26px; font-weight: 700; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-header h2 { font-size: 16px; font-weight: 600; }
+    .add-btn {
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(25,160,227,0.3); }
+
+    .table-card {
+      background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--bg); }
+    th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--subtext);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    td {
+      padding: 14px 20px;
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+    tr:hover td { background: var(--bg); }
+    .role-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .role-teacher { background: rgba(70,213,212,0.12);  color: var(--teal); }
+    .role-student { background: rgba(25,160,227,0.12);  color: var(--blue); }
+    .role-parent  { background: rgba(34,197,94,0.12);   color: #22c55e; }
+    .action-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--subtext);
+      font-family: inherit;
+      transition: all 0.2s;
+      margin-right: 4px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .action-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .action-btn.del:hover { border-color: #ef4444; color: #ef4444; }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .quick-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 20px var(--shadow);
+      text-decoration: none;
+      color: var(--text);
+      display: block;
+    }
+    .quick-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--teal);
+      box-shadow: 0 8px 30px var(--shadow);
+    }
+    .quick-card .qicon { font-size: 36px; margin-bottom: 12px; }
+    .quick-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .quick-card p  { font-size: 12px; color: var(--subtext); }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .modal-close {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--subtext);
+    }
+    .modal-close:hover { color: #ef4444; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(70,213,212,0.12);
+    }
+    .modal-submit {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      <a class="menu-item active" href="/admin">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/admin">
+        <span class="icon">👥</span> <span data-ar="المستخدمون" data-en="Users">Users</span>
+      </a>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="الجدول" data-en="Timetable">Timetable</span>
+      </a>
+      <div class="menu-label" data-ar="الإدارة" data-en="Management">Management</div>
+      <a class="menu-item" href="/admin/subjects">
+        <span class="icon">📚</span> <span data-ar="المواد" data-en="Subjects">Subjects</span>
+      </a>
+      <a class="menu-item" href="/admin/classes">
+        <span class="icon">🏫</span> <span data-ar="الصفوف" data-en="Classes">Classes</span>
+      </a>
+      <a class="menu-item" href="/admin/sections">
+  <span class="icon">🎯</span> <span data-ar="الشعب" data-en="Sections">Sections</span>
+</a>
+      <a class="menu-item" href="/admin/news">
+  <span class="icon">📰</span> <span data-ar="الأخبار" data-en="News">News</span>
+</a>
+<a class="menu-item" href="/admin/reviews">
+  <span class="icon">⭐</span> <span data-ar="الآراء" data-en="Reviews">Reviews</span>
+</a>
+      
+      
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Admin Dashboard</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="admin-badge">
+          <div class="badge-dot"></div>
+          🛡️ {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon teal">👨‍🏫</div>
+          <div class="stat-info">
+            <p data-ar="إجمالي المعلمين" data-en="Total Teachers">Total Teachers</p>
+            <h3>{{ teachers|length }}</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">🎒</div>
+          <div class="stat-info">
+            <p data-ar="إجمالي الطلاب" data-en="Total Students">Total Students</p>
+            <h3>{{ students|length }}</h3>
+          </div>
+        </div>
+        
+        
+      </div>
+
+      <div class="section-header">
+        <h2 data-ar="⚡ إجراءات سريعة" data-en="⚡ Quick Actions">⚡ Quick Actions</h2>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="openAddModal()">
+          <div class="qicon">➕</div>
+          <h3 data-ar="إضافة مستخدم" data-en="Add User">Add User</h3>
+          <p data-ar="إضافة معلم أو طالب أو ولي أمر" data-en="Add teacher, student or parent">Add teacher, student or parent</p>
+        </div>
+        <a class="quick-card" href="/admin/subjects">
+          <div class="qicon">📚</div>
+          <h3 data-ar="إدارة المواد" data-en="Manage Subjects">Manage Subjects</h3>
+          <p data-ar="إضافة وتعديل المواد الدراسية" data-en="Add and edit subjects">Add and edit subjects</p>
+        </a>
+        <a class="quick-card" href="/admin/classes">
+          <div class="qicon">🏫</div>
+          <h3 data-ar="إدارة القاعات" data-en="Manage Classes">Manage Classes</h3>
+          <p data-ar="إضافة وتعديل القاعات الدراسية" data-en="Add and edit classrooms">Add and edit classrooms</p>
+        </a>
+      </div>
+
+      <div class="section-header">
+        <h2 data-ar="👥 جميع المستخدمين" data-en="👥 All Users">👥 All Users</h2>
+        <button class="add-btn" onclick="openAddModal()" data-ar="+ إضافة مستخدم" data-en="+ Add New User">+ Add New User</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th data-ar="الاسم"       data-en="Name">Name</th>
+              <th data-ar="اسم المستخدم" data-en="Username">Username</th>
+              <th data-ar="البريد"      data-en="Email">Email</th>
+              <th data-ar="الدور"       data-en="Role">Role</th>
+              <th data-ar="الإجراءات"   data-en="Actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in teachers %}
+            <tr>
+              <td>{{ t.Full_Name }}</td>
+              <td>{{ t.Username }}</td>
+              <td>{{ t.Email or '—' }}</td>
+              <td><span class="role-badge role-teacher">Teacher</span></td>
+              <td>
+                <button class="action-btn" onclick="openEditModal({{ t.User_ID }}, '{{ t.Full_Name }}', '{{ t.Username }}', '{{ t.Email or '' }}', 'Teacher')">✏️ Edit</button>
+                <a class="action-btn del" href="/admin/delete-user/{{ t.User_ID }}" onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+              </td>
+            </tr>
+            {% endfor %}
+            {% for s in students %}
+            <tr>
+              <td>{{ s.Full_Name }}</td>
+              <td>{{ s.Username }}</td>
+              <td>{{ s.Email or '—' }}</td>
+              <td><span class="role-badge role-student">Student</span></td>
+              <td>
+                <button class="action-btn" onclick="openEditModal({{ s.User_ID }}, '{{ s.Full_Name }}', '{{ s.Username }}', '{{ s.Email or '' }}', 'Student')">✏️ Edit</button>
+                <a class="action-btn del" href="/admin/delete-user/{{ s.User_ID }}" onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+              </td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 data-ar="➕ إضافة مستخدم جديد" data-en="➕ Add New User">➕ Add New User</h2>
+        <button class="modal-close" onclick="closeAddModal()">✕</button>
+      </div>
+      <form method="POST" action="/admin/add-user">
+        <div class="form-group">
+          <label data-ar="الدور" data-en="Role">Role</label>
+          <select name="role" required onchange="toggleGender(this.value)">
+  <option value="Teacher">Teacher</option>
+  <option value="Student">Student</option>
+  <option value="Admin">Admin</option>
+</select>
+        </div>
+        <div class="form-group">
+          <label data-ar="الاسم الكامل" data-en="Full Name">Full Name</label>
+          <input type="text" name="full_name" required>
+        </div>
+        <div class="form-group">
+          <label data-ar="اسم المستخدم" data-en="Username">Username</label>
+          <input type="text" name="username" required>
+        </div>
+        <div class="form-group">
+          <label data-ar="البريد" data-en="Email">Email</label>
+          <input type="email" name="email">
+        </div>
+        <div class="form-group" id="gender-group" style="display:none;">
+  <label data-ar="الجنس" data-en="Gender">Gender</label>
+  <select name="gender">
+    <option value="M" data-ar="ذكر" data-en="Male">Male</option>
+    <option value="F" data-ar="أنثى" data-en="Female">Female</option>
+  </select>
+</div>
+        <div class="form-group">
+          <label data-ar="كلمة المرور" data-en="Password">Password</label>
+          <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="modal-submit" data-ar="إضافة" data-en="Add User">Add User</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 data-ar="✏️ تعديل مستخدم" data-en="✏️ Edit User">✏️ Edit User</h2>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <form method="POST" id="editForm">
+        <div class="form-group">
+          <label data-ar="الدور" data-en="Role">Role</label>
+          <select name="role" id="edit-role" required>
+            <option value="Teacher">Teacher</option>
+            <option value="Student">Student</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="الاسم الكامل" data-en="Full Name">Full Name</label>
+          <input type="text" name="full_name" id="edit-name" required>
+        </div>
+        <div class="form-group">
+          <label data-ar="اسم المستخدم" data-en="Username">Username</label>
+          <input type="text" name="username" id="edit-username" required>
+        </div>
+        <div class="form-group">
+          <label data-ar="البريد" data-en="Email">Email</label>
+          <input type="email" name="email" id="edit-email">
+        </div>
+        <button type="submit" class="modal-submit" data-ar="حفظ" data-en="Save Changes">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('page-title').textContent = isArabic ? 'لوحة تحكم المدير' : 'Admin Dashboard';
+      document.getElementById('lang-btn').textContent   = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+
+    function openAddModal()  { document.getElementById('addModal').classList.add('show'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+
+    function openEditModal(id, name, username, email, role) {
+      document.getElementById('editForm').action = '/admin/edit-user/' + id;
+      document.getElementById('edit-name').value     = name;
+      document.getElementById('edit-username').value = username;
+      document.getElementById('edit-email').value    = email;
+      document.getElementById('edit-role').value     = role;
+      document.getElementById('editModal').classList.add('show');
+    }
+    function closeEditModal() { document.getElementById('editModal').classList.remove('show'); }
+    function toggleGender(role) {
+  const g = document.getElementById('gender-group');
+  g.style.display = role === 'Student' ? 'block' : 'none';
+}
+  </script>
+
+</body>
+</html>

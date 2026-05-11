@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Section</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#46D5D4; --purple:#7378EC; --blue:#19A0E3;
+      --bg:#f8faff; --card:#ffffff; --text:#1a1a2e;
+      --subtext:#6b7280; --border:#e5e7eb;
+      --shadow:rgba(115,120,236,0.12); --input-bg:#f9fafb;
+      --sidebar-bg:#1a1a2e; --sidebar-text:rgba(255,255,255,0.6);
+      --sidebar-border:rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f1a; --card:#1a1a2e; --text:#f0f0f0;
+      --subtext:#9ca3af; --border:#2d2d44;
+      --shadow:rgba(70,213,212,0.10); --input-bg:#252540;
+      --sidebar-bg:#0a0a14; --sidebar-text:rgba(255,255,255,0.5);
+      --sidebar-border:rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins','Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; transition:all 0.3s; }
+    [dir="rtl"] body { font-family:'Cairo','Poppins',sans-serif; }
+
+    .sidebar { width:260px; background:var(--sidebar-bg); height:100vh; display:flex; flex-direction:column; padding:24px 0; position:fixed; top:0; left:0; z-index:100; border-right:1px solid var(--border); overflow-y:auto; }
+    .sidebar::-webkit-scrollbar { width:5px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+    .sidebar-logo { display:flex; align-items:center; gap:12px; padding:0 24px 28px; border-bottom:1px solid var(--sidebar-border); }
+    .sidebar-logo img { width:44px; height:44px; border-radius:10px; background:white; padding:2px; object-fit:contain; }
+    .sidebar-logo h2 { font-size:18px; font-weight:700; color:white; }
+    .sidebar-logo h2 span { background:linear-gradient(135deg,var(--teal),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sidebar-menu { padding:20px 12px; flex:1; }
+    .menu-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; padding:0 12px; margin:16px 0 8px; }
+    .menu-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--sidebar-text); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
+    .menu-item:hover, .menu-item.active { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .menu-item .icon { font-size:18px; width:24px; text-align:center; }
+    .sidebar-footer { padding:16px 24px; border-top:1px solid var(--sidebar-border); }
+    .logout-btn { display:flex; align-items:center; gap:10px; color:var(--sidebar-text); font-size:13px; cursor:pointer; transition:color 0.2s; text-decoration:none; }
+    .logout-btn:hover { color:#ef4444; }
+
+    .main { margin-left:260px; flex:1; display:flex; flex-direction:column; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .topbar h1 { font-size:20px; font-weight:600; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .top-btn { background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:7px 14px; font-size:12px; font-weight:500; color:var(--text); cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .top-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .user-badge { display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:6px 14px; font-size:13px; font-weight:500; }
+    .badge-dot { width:8px; height:8px; background:var(--teal); border-radius:50%; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding:32px; }
+    .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--subtext); text-decoration:none; font-size:13px; margin-bottom:18px; transition:color 0.2s; }
+    .back-link:hover { color:var(--teal); }
+
+    .section-header-card {
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      border-radius:20px; padding:30px; color:white;
+      margin-bottom:28px; position:relative; overflow:hidden;
+    }
+    .section-header-card::before {
+      content:''; position:absolute; top:-50%; right:-30%;
+      width:300px; height:300px; border-radius:50%;
+      background:rgba(255,255,255,0.1);
+    }
+    .section-header-card h2 { font-size:28px; font-weight:800; margin-bottom:6px; position:relative; z-index:2; }
+    .section-header-card .info-row { display:flex; gap:30px; margin-top:14px; flex-wrap:wrap; position:relative; z-index:2; }
+    .section-header-card .info-row div { font-size:14px; opacity:0.95; }
+
+    /* Tabs */
+    .tabs {
+      display:flex; gap:8px; margin-bottom:24px;
+      border-bottom:1px solid var(--border);
+    }
+    .tab-btn {
+      padding:12px 22px; background:transparent; border:none;
+      font-size:14px; font-weight:500; color:var(--subtext);
+      cursor:pointer; font-family:inherit;
+      border-bottom:2px solid transparent;
+      transition:all 0.2s;
+    }
+    .tab-btn:hover { color:var(--text); }
+    .tab-btn.active { color:var(--teal); border-bottom-color:var(--teal); }
+
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    .panel {
+      background:var(--card); border-radius:16px; padding:24px;
+      border:1px solid var(--border); box-shadow:0 4px 20px var(--shadow);
+      margin-bottom:20px;
+    }
+    .panel-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .panel-header h3 { font-size:16px; font-weight:700; }
+    .add-btn {
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      color:white; border:none; border-radius:10px;
+      padding:9px 16px; font-size:12px; font-weight:500;
+      font-family:inherit; cursor:pointer; transition:all 0.2s;
+    }
+    .add-btn:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(25,160,227,0.3); }
+
+    /* Attendance Form */
+    .attendance-list { display:flex; flex-direction:column; gap:10px; }
+    .attendance-row {
+      display:flex; align-items:center; gap:14px;
+      padding:14px; background:var(--input-bg);
+      border-radius:12px; transition:all 0.2s;
+    }
+    .student-avatar {
+      width:40px; height:40px; border-radius:50%;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:700; font-size:14px;
+      flex-shrink:0;
+    }
+    .student-name { flex:1; font-size:14px; font-weight:500; }
+    .status-options { display:flex; gap:6px; }
+    .status-radio { display:none; }
+    .status-label {
+      padding:6px 14px; border-radius:8px;
+      font-size:12px; font-weight:600; cursor:pointer;
+      border:1.5px solid var(--border);
+      transition:all 0.2s;
+    }
+    .status-label:hover { border-color:var(--teal); }
+    .status-radio:checked + .status-label.present { background:rgba(34,197,94,0.15); border-color:#22c55e; color:#22c55e; }
+    .status-radio:checked + .status-label.absent  { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#ef4444; }
+    .status-radio:checked + .status-label.late    { background:rgba(245,158,11,0.15); border-color:#f59e0b; color:#f59e0b; }
+
+    .submit-btn {
+      width:100%; padding:14px;
+      background:linear-gradient(135deg,var(--teal),var(--blue));
+      color:white; border:none; border-radius:12px;
+      font-size:14px; font-weight:600; font-family:inherit;
+      cursor:pointer; transition:all 0.3s; margin-top:18px;
+    }
+    .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(25,160,227,0.4); }
+
+    /* Materials */
+    .materials-list { display:flex; flex-direction:column; gap:10px; }
+    .material-item {
+      display:flex; align-items:center; gap:14px;
+      padding:14px; background:var(--input-bg);
+      border-radius:12px; transition:all 0.2s;
+    }
+    .material-icon {
+      width:42px; height:42px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .material-icon.video { background:rgba(239,68,68,0.12); color:#ef4444; }
+    .material-icon.file { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .material-icon.link { background:rgba(115,120,236,0.12); color:var(--purple); }
+    .material-info { flex:1; }
+    .material-info h4 { font-size:14px; font-weight:600; margin-bottom:3px; }
+    .material-info p { font-size:11px; color:var(--subtext); }
+    .delete-mat {
+      background:transparent; border:1px solid var(--border);
+      border-radius:8px; width:32px; height:32px;
+      cursor:pointer; color:var(--subtext); font-size:14px;
+      transition:all 0.2s; text-decoration:none;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .delete-mat:hover { border-color:#ef4444; color:#ef4444; }
+
+    /* Modal */
+    .modal-overlay {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%; background:rgba(0,0,0,0.5);
+      backdrop-filter:blur(4px); z-index:1000;
+      justify-content:center; align-items:center; padding:20px;
+    }
+    .modal-overlay.show { display:flex; }
+    .modal {
+      background:var(--card); border-radius:20px; padding:32px;
+      width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+      animation:modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .modal-header h2 { font-size:18px; font-weight:700; }
+    .modal-close { background:var(--bg); border:1px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:16px; color:var(--subtext); }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:12px; font-weight:500; margin-bottom:6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:11px 14px; background:var(--input-bg);
+      border:1.5px solid var(--border); border-radius:10px;
+      font-size:13px; font-family:inherit; color:var(--text); outline:none;
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--teal); }
+
+    /* Evaluate */
+    .evaluate-row {
+      display:flex; align-items:center; gap:14px;
+      padding:14px; background:var(--input-bg);
+      border-radius:12px; margin-bottom:10px;
+    }
+    .eval-btn {
+      background:transparent; border:1px solid var(--border);
+      border-radius:8px; padding:7px 14px; font-size:12px;
+      cursor:pointer; color:var(--subtext); font-family:inherit;
+      transition:all 0.2s;
+    }
+    .eval-btn:hover { border-color:var(--purple); color:var(--purple); }
+
+    .empty-state {
+      text-align:center; padding:40px 20px;
+      color:var(--subtext);
+    }
+    .empty-state .icon { font-size:42px; margin-bottom:10px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      <a class="menu-item" href="/teacher">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item active" href="/teacher">
+        <span class="icon">🎯</span> <span data-ar="شعبي" data-en="My Sections">My Sections</span>
+      </a>
+      <div class="menu-label" data-ar="الأنشطة" data-en="Activities">Activities</div>
+      <a class="menu-item" href="#">
+        <span class="icon">📅</span> <span data-ar="جدولي" data-en="My Schedule">My Schedule</span>
+      </a>
+      <a class="menu-item" href="/teacher/messages">
+  <span class="icon">💬</span> <span data-ar="الرسائل" data-en="Messages">Messages</span>
+</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Section</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="user-badge">
+          <div class="badge-dot"></div>
+          👨‍🏫 {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <a href="/teacher" class="back-link" data-ar="← العودة للوحة التحكم" data-en="← Back to Dashboard">← Back to Dashboard</a>
+
+      <div class="section-header-card">
+        <h2>🎯 {{ section.Section_Name }}</h2>
+        <div class="info-row">
+          <div>📚 <strong data-ar="المادة:" data-en="Subject:">Subject:</strong> {{ section.Subject_Name }}</div>
+          <div>🏫 <strong data-ar="القاعة:" data-en="Room:">Room:</strong> {{ section.Room_Number }}</div>
+          <div>👥 <strong data-ar="الطلاب:" data-en="Students:">Students:</strong> {{ students|length }}</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('attendance', this)" data-ar="📋 الحضور اليوم" data-en="📋 Today's Attendance">📋 Today's Attendance</button>
+        <button class="tab-btn" onclick="switchTab('history', this)" data-ar="📊 سجل الحضور" data-en="📊 Attendance History">📊 Attendance History</button>
+        <button class="tab-btn" onclick="switchTab('materials', this)" data-ar="📚 الملفات والفيديوهات" data-en="📚 Materials">📚 Materials</button>
+        <button class="tab-btn" onclick="switchTab('evaluate', this)" data-ar="⭐ تقييم الطلاب" data-en="⭐ Evaluate Students">⭐ Evaluate Students</button>
+      </div>
+
+      <!-- Attendance Tab -->
+      <div class="tab-content active" id="tab-attendance">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 data-ar="📋 تسجيل حضور اليوم" data-en="📋 Take Today's Attendance">📋 Take Today's Attendance</h3>
+          </div>
+          {% if students %}
+          <form method="POST" action="/teacher/take-attendance/{{ section.Section_ID }}">
+            <div class="attendance-list">
+              {% for s in students %}
+              <div class="attendance-row">
+                <div class="student-avatar">{{ s.Full_Name[0]|upper }}</div>
+                <div class="student-name">{{ s.Full_Name }}</div>
+                <div class="status-options">
+                  <input type="radio" id="p{{s.Student_ID}}" name="status_{{s.Student_ID}}" value="Present" class="status-radio" checked>
+                  <label for="p{{s.Student_ID}}" class="status-label present" data-ar="حاضر" data-en="Present">Present</label>
+                  
+                  <input type="radio" id="a{{s.Student_ID}}" name="status_{{s.Student_ID}}" value="Absent" class="status-radio">
+                  <label for="a{{s.Student_ID}}" class="status-label absent" data-ar="غائب" data-en="Absent">Absent</label>
+                  
+                  <input type="radio" id="l{{s.Student_ID}}" name="status_{{s.Student_ID}}" value="Late" class="status-radio">
+                  <label for="l{{s.Student_ID}}" class="status-label late" data-ar="متأخر" data-en="Late">Late</label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button type="submit" class="submit-btn" data-ar="✓ تسجيل الحضور" data-en="✓ Submit Attendance">✓ Submit Attendance</button>
+          </form>
+          {% else %}
+          <div class="empty-state">
+            <div class="icon">👥</div>
+            <p data-ar="لا يوجد طلاب مسجلون بهذه الشعبة" data-en="No students enrolled in this section">No students enrolled in this section</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div class="tab-content" id="tab-history">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 data-ar="📊 سجل الحضور الكامل" data-en="📊 Full Attendance History">📊 Full Attendance History</h3>
+          </div>
+          {% if history_grouped %}
+          {% for date, records in history_grouped.items() %}
+          <div style="margin-bottom:24px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border);">
+              <span style="background:linear-gradient(135deg,var(--teal),var(--blue)); color:white; padding:6px 14px; border-radius:50px; font-size:12px; font-weight:600;">
+                📅 {{ date }}
+              </span>
+              {% if date == today %}
+                <span style="background:rgba(34,197,94,0.12); color:#22c55e; padding:4px 10px; border-radius:50px; font-size:11px; font-weight:700;" data-ar="اليوم" data-en="Today">Today</span>
+              {% endif %}
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px;">
+              {% for r in records %}
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--input-bg); border-radius:10px; border-left:3px solid 
+                {% if r.Status == 'Present' %}#22c55e
+                {% elif r.Status == 'Late' %}#f59e0b
+                {% else %}#ef4444{% endif %};">
+                <div class="student-avatar" style="width:32px; height:32px; font-size:12px;">{{ r.Full_Name[0]|upper }}</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; font-weight:600;">{{ r.Full_Name }}</div>
+                  <div style="font-size:11px; 
+                    {% if r.Status == 'Present' %}color:#22c55e;
+                    {% elif r.Status == 'Late' %}color:#f59e0b;
+                    {% else %}color:#ef4444;{% endif %}">
+                    {% if r.Status == 'Present' %}✓ Present
+                    {% elif r.Status == 'Late' %}⏰ Late
+                    {% else %}✕ Absent{% endif %}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state">
+            <div class="icon">📊</div>
+            <p data-ar="لا يوجد سجل حضور بعد" data-en="No attendance records yet">No attendance records yet</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Materials Tab -->
+      <div class="tab-content" id="tab-materials">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 data-ar="📚 الملفات والفيديوهات" data-en="📚 Files & Videos">📚 Files & Videos</h3>
+            <button class="add-btn" onclick="openMaterialModal()" data-ar="+ إضافة" data-en="+ Add">+ Add</button>
+          </div>
+          {% if materials %}
+          <div class="materials-list">
+            {% for m in materials %}
+            <div class="material-item">
+              <div class="material-icon {{ m.Type|lower if m.Type else 'file' }}">
+                {% if m.Type == 'Video' %}🎥{% elif m.Type == 'Link' %}🔗{% else %}📄{% endif %}
+              </div>
+              <div class="material-info">
+                <h4>{{ m.Title }}</h4>
+                <p>📅 {{ m.Upload_Date[:10] }}</p>
+              </div>
+              <a class="delete-mat" href="/teacher/delete-material/{{ section.Section_ID }}/{{ m.Material_ID }}" onclick="return confirm('Delete?')">🗑️</a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="icon">📚</div>
+            <p data-ar="لا توجد ملفات بعد" data-en="No materials yet">No materials yet</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Evaluate Tab -->
+      <div class="tab-content" id="tab-evaluate">
+        <div class="panel">
+          <div class="panel-header">
+            <h3 data-ar="⭐ تقييم الطلاب" data-en="⭐ Evaluate Students">⭐ Evaluate Students</h3>
+          </div>
+          {% if students %}
+          {% for s in students %}
+          <div class="evaluate-row">
+            <div class="student-avatar">{{ s.Full_Name[0]|upper }}</div>
+            <div class="student-name">{{ s.Full_Name }}</div>
+            <button class="eval-btn" onclick="openEvalModal({{ s.Student_ID }}, '{{ s.Full_Name }}')" data-ar="إضافة تقييم" data-en="Add Evaluation">Add Evaluation</button>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state">
+            <div class="icon">⭐</div>
+            <p data-ar="لا يوجد طلاب" data-en="No students">No students</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Add Material Modal -->
+  <div class="modal-overlay" id="materialModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 data-ar="➕ إضافة ملف/فيديو" data-en="➕ Add Material">➕ Add Material</h2>
+        <button class="modal-close" onclick="closeMaterialModal()">✕</button>
+      </div>
+      <form method="POST" action="/teacher/add-material/{{ section.Section_ID }}">
+        <div class="form-group">
+          <label data-ar="العنوان" data-en="Title">Title</label>
+          <input type="text" name="title" required placeholder="e.g. Lesson 1 Notes">
+        </div>
+        <div class="form-group">
+          <label data-ar="النوع" data-en="Type">Type</label>
+          <select name="type" required>
+            <option value="File">📄 File</option>
+            <option value="Video">🎥 Video</option>
+            <option value="Link">🔗 Link</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="الرابط/المسار" data-en="Path/URL">Path/URL</label>
+          <input type="text" name="file_path" placeholder="e.g. https://...  or  filename.pdf">
+        </div>
+        <button type="submit" class="submit-btn" data-ar="إضافة" data-en="Add">Add</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Evaluation Modal -->
+  <div class="modal-overlay" id="evalModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="eval-title" data-ar="⭐ تقييم الطالب" data-en="⭐ Evaluate Student">⭐ Evaluate Student</h2>
+        <button class="modal-close" onclick="closeEvalModal()">✕</button>
+      </div>
+      <form method="POST" action="/teacher/evaluate/{{ section.Section_ID }}">
+        <input type="hidden" name="student_id" id="eval-sid">
+        <div class="form-group">
+          <label data-ar="المستوى" data-en="Performance Level">Performance Level</label>
+          <select name="performance_level" required>
+            <option value="Excellent">⭐⭐⭐⭐⭐ Excellent</option>
+            <option value="Very Good">⭐⭐⭐⭐ Very Good</option>
+            <option value="Good">⭐⭐⭐ Good</option>
+            <option value="Average">⭐⭐ Average</option>
+            <option value="Needs Improvement">⭐ Needs Improvement</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-ar="ملاحظات" data-en="Comment">Comment</label>
+          <textarea name="comment" required placeholder="Your evaluation..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn" data-ar="حفظ التقييم" data-en="Save Evaluation">Save Evaluation</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('lang-btn').textContent = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+
+    function switchTab(tabName, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+    }
+
+    function openMaterialModal()  { document.getElementById('materialModal').classList.add('show'); }
+    function closeMaterialModal() { document.getElementById('materialModal').classList.remove('show'); }
+
+    function openEvalModal(sid, name) {
+      document.getElementById('eval-sid').value = sid;
+      document.getElementById('eval-title').textContent = '⭐ Evaluate: ' + name;
+      document.getElementById('evalModal').classList.add('show');
+    }
+    function closeEvalModal() { document.getElementById('evalModal').classList.remove('show'); }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Fares | Smart Timetable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#46D5D4; --purple:#7378EC; --blue:#19A0E3;
+      --bg:#f8faff; --card:#ffffff; --text:#1a1a2e;
+      --subtext:#6b7280; --border:#e5e7eb;
+      --shadow:rgba(115,120,236,0.12); --input-bg:#f9fafb;
+      --sidebar-bg:#1a1a2e; --sidebar-text:rgba(255,255,255,0.6);
+      --sidebar-border:rgba(255,255,255,0.08);
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f1a; --card:#1a1a2e; --text:#f0f0f0;
+      --subtext:#9ca3af; --border:#2d2d44;
+      --shadow:rgba(70,213,212,0.10); --input-bg:#252540;
+      --sidebar-bg:#0a0a14; --sidebar-text:rgba(255,255,255,0.5);
+      --sidebar-border:rgba(255,255,255,0.05);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins','Cairo',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; transition:all 0.3s; }
+    [dir="rtl"] body { font-family:'Cairo','Poppins',sans-serif; }
+
+    .sidebar { width:260px; background:var(--sidebar-bg); height:100vh; display:flex; flex-direction:column; padding:24px 0; position:fixed; top:0; left:0; z-index:100; border-right:1px solid var(--border); overflow-y:auto; }
+    .sidebar::-webkit-scrollbar { width:5px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+    .sidebar-logo { display:flex; align-items:center; gap:12px; padding:0 24px 28px; border-bottom:1px solid var(--sidebar-border); }
+    .sidebar-logo img { width:44px; height:44px; border-radius:10px; background:white; padding:2px; object-fit:contain; }
+    .sidebar-logo h2 { font-size:18px; font-weight:700; color:white; }
+    .sidebar-logo h2 span { background:linear-gradient(135deg,var(--teal),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .sidebar-menu { padding:20px 12px; flex:1; }
+    .menu-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; padding:0 12px; margin:16px 0 8px; }
+    .menu-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:10px; color:var(--sidebar-text); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; margin-bottom:2px; text-decoration:none; }
+    .menu-item:hover, .menu-item.active { background:rgba(70,213,212,0.12); color:var(--teal); }
+    .menu-item .icon { font-size:18px; width:24px; text-align:center; }
+    .sidebar-footer { padding:16px 24px; border-top:1px solid var(--sidebar-border); }
+    .logout-btn { display:flex; align-items:center; gap:10px; color:var(--sidebar-text); font-size:13px; cursor:pointer; transition:color 0.2s; text-decoration:none; }
+    .logout-btn:hover { color:#ef4444; }
+
+    .main { margin-left:260px; flex:1; display:flex; flex-direction:column; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .topbar h1 { font-size:20px; font-weight:600; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .top-btn { background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:7px 14px; font-size:12px; font-weight:500; color:var(--text); cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .top-btn:hover { border-color:var(--teal); color:var(--teal); }
+    .admin-badge { display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:50px; padding:6px 14px; font-size:13px; font-weight:500; }
+    .badge-dot { width:8px; height:8px; background:var(--teal); border-radius:50%; animation:blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .content { padding:32px; }
+
+    /* AI Hero Banner */
+    .ai-banner {
+      background:linear-gradient(135deg,#7378EC 0%,#46D5D4 50%,#19A0E3 100%);
+      border-radius:24px; padding:40px;
+      color:white; margin-bottom:32px;
+      position:relative; overflow:hidden;
+    }
+    .ai-banner::before {
+      content:''; position:absolute; top:-50%; right:-20%;
+      width:500px; height:500px; border-radius:50%;
+      background:rgba(255,255,255,0.08);
+      animation:pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+    .ai-banner-content { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:30px; flex-wrap:wrap; }
+    .ai-banner-text { flex:1; min-width:300px; }
+    .ai-badge {
+      display:inline-block; background:rgba(255,255,255,0.2);
+      backdrop-filter:blur(10px); padding:6px 16px;
+      border-radius:50px; font-size:11px; font-weight:700;
+      margin-bottom:14px; letter-spacing:1px;
+    }
+    .ai-banner h2 { font-size:32px; font-weight:800; margin-bottom:8px; }
+    .ai-banner p { font-size:14px; opacity:0.95; line-height:1.7; max-width:500px; }
+    
+    .generate-btn {
+      background:white; color:var(--purple);
+      border:none; border-radius:14px;
+      padding:18px 32px; font-size:15px; font-weight:700;
+      font-family:inherit; cursor:pointer;
+      transition:all 0.3s; box-shadow:0 8px 30px rgba(0,0,0,0.2);
+      display:flex; align-items:center; gap:10px;
+    }
+    .generate-btn:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+    .generate-btn .spark { font-size:20px; animation:spark 1.5s ease-in-out infinite; }
+    @keyframes spark { 0%,100%{transform:rotate(0);} 50%{transform:rotate(15deg);} }
+
+    /* Stats Row */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+    .stat-mini {
+      background:var(--card); border-radius:14px; padding:20px;
+      border:1px solid var(--border); display:flex;
+      align-items:center; gap:14px;
+    }
+    .stat-mini .icon {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px;
+    }
+    .stat-mini .icon.s1 { background:rgba(70,213,212,0.12); }
+    .stat-mini .icon.s2 { background:rgba(115,120,236,0.12); }
+    .stat-mini .icon.s3 { background:rgba(25,160,227,0.12); }
+    .stat-mini .icon.s4 { background:rgba(34,197,94,0.12); }
+    .stat-mini h3 { font-size:22px; font-weight:700; }
+    .stat-mini p { font-size:11px; color:var(--subtext); }
+
+    /* Status Messages */
+    .status-msg {
+      padding:14px 20px; border-radius:12px;
+      margin-bottom:20px; font-size:14px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .status-msg.success {
+      background:rgba(34,197,94,0.1);
+      border:1px solid rgba(34,197,94,0.3);
+      color:#22c55e;
+    }
+    .status-msg.error {
+      background:rgba(239,68,68,0.1);
+      border:1px solid rgba(239,68,68,0.3);
+      color:#ef4444;
+    }
+
+    /* Timetable Grid */
+    .timetable-container {
+      background:var(--card); border-radius:18px;
+      border:1px solid var(--border);
+      box-shadow:0 4px 20px var(--shadow);
+      overflow:hidden; margin-bottom:20px;
+    }
+    .timetable-header {
+      padding:20px 24px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .timetable-header h3 { font-size:18px; font-weight:700; }
+    .legend { display:flex; gap:14px; }
+    .legend-item {
+      display:flex; align-items:center; gap:6px;
+      font-size:12px; color:var(--subtext);
+    }
+    .legend-dot {
+      width:10px; height:10px; border-radius:50%;
+    }
+    .legend-dot.male { background:var(--blue); }
+    .legend-dot.female { background:#ec4899; }
+
+    .timetable-grid {
+      overflow-x:auto;
+      padding:20px;
+    }
+    .day-row {
+      margin-bottom:30px;
+    }
+    .day-row:last-child { margin-bottom:0; }
+    .day-header {
+      display:flex; align-items:center; gap:10px;
+      padding-bottom:12px;
+      margin-bottom:14px;
+      border-bottom:2px solid var(--border);
+    }
+    .day-header h4 { font-size:16px; font-weight:700; }
+    .day-count {
+      background:rgba(70,213,212,0.12); color:var(--teal);
+      padding:3px 10px; border-radius:50px;
+      font-size:11px; font-weight:700;
+    }
+
+    .day-slots {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+      gap:12px;
+    }
+    .slot-card {
+      background:var(--bg);
+      border-radius:14px; padding:16px;
+      border-left:4px solid var(--teal);
+      transition:all 0.2s;
+    }
+    .slot-card.male   { border-left-color:var(--blue); }
+    .slot-card.female { border-left-color:#ec4899; }
+    .slot-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px var(--shadow); }
+    .slot-time {
+      font-size:11px; color:var(--subtext);
+      margin-bottom:8px; font-weight:600;
+      display:flex; align-items:center; gap:6px;
+    }
+    .slot-card h5 { font-size:14px; font-weight:700; margin-bottom:4px; }
+    .slot-card .meta {
+      font-size:11px; color:var(--subtext);
+      line-height:1.6;
+    }
+    .slot-card .meta strong { color:var(--text); font-weight:600; }
+
+    .empty-state {
+      text-align:center; padding:80px 20px;
+      color:var(--subtext);
+    }
+    .empty-state .icon { font-size:60px; margin-bottom:14px; }
+    .empty-state h3 { font-size:18px; font-weight:600; margin-bottom:6px; color:var(--text); }
+    .empty-state p { font-size:14px; max-width:500px; margin:0 auto; line-height:1.7; }
+
+    /* Loading */
+    .loading-overlay {
+      display:none; position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
+      z-index:2000;
+      justify-content:center; align-items:center;
+    }
+    .loading-overlay.show { display:flex; }
+    .loading-box {
+      background:var(--card); border-radius:20px;
+      padding:40px 50px; text-align:center;
+    }
+    .loading-spinner {
+      width:60px; height:60px;
+      border:5px solid var(--border);
+      border-top-color:var(--teal);
+      border-radius:50%;
+      margin:0 auto 18px;
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to{transform:rotate(360deg);} }
+    .loading-box h3 { font-size:16px; font-weight:700; margin-bottom:6px; }
+    .loading-box p { font-size:13px; color:var(--subtext); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="/static/logo.png" alt="logo">
+      <h2>Al-<span>Fares</span></h2>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label" data-ar="الرئيسية" data-en="Main">Main</div>
+      <a class="menu-item" href="/admin">
+        <span class="icon">📊</span> <span data-ar="لوحة التحكم" data-en="Dashboard">Dashboard</span>
+      </a>
+      <a class="menu-item" href="/admin">
+        <span class="icon">👥</span> <span data-ar="المستخدمون" data-en="Users">Users</span>
+      </a>
+      <div class="menu-label" data-ar="الإدارة" data-en="Management">Management</div>
+      <a class="menu-item" href="/admin/subjects">
+        <span class="icon">📚</span> <span data-ar="المواد" data-en="Subjects">Subjects</span>
+      </a>
+      <a class="menu-item" href="/admin/classes">
+        <span class="icon">🏫</span> <span data-ar="الصفوف" data-en="Classes">Classes</span>
+      </a>
+      <a class="menu-item" href="/admin/sections">
+        <span class="icon">🎯</span> <span data-ar="الشعب" data-en="Sections">Sections</span>
+      </a>
+      <a class="menu-item" href="/admin/news">
+        <span class="icon">📰</span> <span data-ar="الأخبار" data-en="News">News</span>
+      </a>
+      <a class="menu-item" href="/admin/reviews">
+        <span class="icon">⭐</span> <span data-ar="الآراء" data-en="Reviews">Reviews</span>
+      </a>
+      <div class="menu-label" data-ar="الذكاء الاصطناعي" data-en="AI Intelligence">AI Intelligence</div>
+      <a class="menu-item active" href="/admin/timetable">
+        <span class="icon">🧠</span> <span data-ar="الجدول الذكي" data-en="Smart Timetable">Smart Timetable</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="logout-btn">
+        <span>🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">🧠 Smart Timetable Generator</h1>
+      <div class="topbar-right">
+        <button class="top-btn" onclick="toggleLang()" id="lang-btn">🌐 العربية</button>
+        <button class="top-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark Mode</button>
+        <div class="admin-badge">
+          <div class="badge-dot"></div>
+          🛡️ {{ session.full_name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="ai-banner">
+        <div class="ai-banner-content">
+          <div class="ai-banner-text">
+            <span class="ai-badge">⚡ AI-POWERED</span>
+            <h2 data-ar="🧠 الجدول الذكي" data-en="🧠 Smart Timetable">🧠 Smart Timetable</h2>
+            <p data-ar="ولّد جدول حصص متكامل تلقائياً بالذكاء الاصطناعي مع احترام جميع القيود: الجنس، الأوقات، وعدم تعارض المعلمين والقاعات." data-en="Generate a complete timetable automatically using AI, respecting all constraints: gender, time slots, and no teacher/room conflicts.">
+              Generate a complete timetable automatically using AI, respecting all constraints: gender, time slots, and no teacher/room conflicts.
+            </p>
+          </div>
+          <form method="POST" action="/admin/generate-timetable" onsubmit="showLoading()">
+            <button type="submit" class="generate-btn">
+              <span class="spark">✨</span>
+              <span data-ar="توليد الجدول" data-en="Generate Timetable">Generate Timetable</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {% if request.args.get('status') == 'success' %}
+      <div class="status-msg success">
+        ✅ <span data-ar="تم توليد الجدول بنجاح!" data-en="Timetable generated successfully!">Timetable generated successfully!</span>
+      </div>
+      {% elif request.args.get('status') == 'error' %}
+      <div class="status-msg error">
+        ❌ {{ request.args.get('msg', 'Error generating timetable') }}
+      </div>
+      {% endif %}
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-mini">
+          <div class="icon s1">🎯</div>
+          <div>
+            <h3>{{ sections_count }}</h3>
+            <p data-ar="إجمالي الشعب" data-en="Total Sections">Total Sections</p>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="icon s2">👨‍🏫</div>
+          <div>
+            <h3>{{ teachers_count }}</h3>
+            <p data-ar="المعلمين" data-en="Teachers">Teachers</p>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="icon s3">🏫</div>
+          <div>
+            <h3>{{ classes_count }}</h3>
+            <p data-ar="القاعات" data-en="Classrooms">Classrooms</p>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="icon s4">📅</div>
+          <div>
+            <h3>{{ timetable|length }}</h3>
+            <p data-ar="حصص مجدولة" data-en="Scheduled Classes">Scheduled Classes</p>
+          </div>
+        </div>
+      </div>
+
+      {% if timetable %}
+      <div class="timetable-container">
+        <div class="timetable-header">
+          <h3 data-ar="📅 الجدول الأسبوعي" data-en="📅 Weekly Schedule">📅 Weekly Schedule</h3>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot male"></div>
+              <span data-ar="ذكور" data-en="Males">Males</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot female"></div>
+              <span data-ar="إناث" data-en="Females">Females</span>
+            </div>
+          </div>
+        </div>
+        <div class="timetable-grid">
+          {% set days = ['Saturday','Sunday','Monday','Tuesday','Wednesday'] %}
+          {% set day_ar = {'Saturday':'السبت','Sunday':'الأحد','Monday':'الإثنين','Tuesday':'الثلاثاء','Wednesday':'الأربعاء'} %}
+          {% for d in days %}
+            {% set day_classes = timetable|selectattr('Day','equalto',d)|list %}
+            {% if day_classes %}
+            <div class="day-row">
+              <div class="day-header">
+                <h4 data-ar="{{ day_ar[d] }}" data-en="{{ d }}">{{ d }}</h4>
+                <span class="day-count">{{ day_classes|length }} <span data-ar="حصة" data-en="classes">classes</span></span>
+              </div>
+              <div class="day-slots">
+                {% for c in day_classes %}
+                <div class="slot-card {{ c.Gender|lower }}">
+                  <div class="slot-time">🕐 {{ c.Start_Time }} - {{ c.End_Time }}</div>
+                  <h5>{{ c.Subject_Name }}</h5>
+                  <div class="meta">
+                    <strong>{{ c.Section_Name }}</strong><br>
+                    👨‍🏫 {{ c.Teacher_Name }}<br>
+                    🏫 {{ c.Room_Number }}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="icon">🧠</div>
+        <h3 data-ar="لا يوجد جدول بعد" data-en="No timetable yet">No timetable yet</h3>
+        <p data-ar="اضغط على زر 'توليد الجدول' أعلاه لإنشاء جدول حصص ذكي. تأكد من إضافة الشعب والمعلمين والقاعات أولاً." data-en="Click 'Generate Timetable' above to create a smart schedule. Make sure you have sections, teachers, and classrooms first.">
+          Click "Generate Timetable" above to create a smart schedule. Make sure you have sections, teachers, and classrooms first.
+        </p>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      <h3 data-ar="🧠 الذكاء الاصطناعي يعمل..." data-en="🧠 AI is working...">🧠 AI is working...</h3>
+      <p data-ar="جاري توليد جدول مثالي" data-en="Generating optimal timetable">Generating optimal timetable</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+    let isArabic = false;
+    function toggleLang() {
+      isArabic = !isArabic;
+      const html = document.documentElement;
+      html.setAttribute('dir',  isArabic ? 'rtl' : 'ltr');
+      html.setAttribute('lang', isArabic ? 'ar'  : 'en');
+      document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+      });
+      document.getElementById('page-title').textContent = isArabic ? '🧠 توليد الجدول الذكي' : '🧠 Smart Timetable Generator';
+      document.getElementById('lang-btn').textContent = isArabic ? '🌐 English' : '🌐 العربية';
+    }
+    function showLoading() {
+      document.getElementById('loading').classList.add('show');
+    }
+  </script>
+
+</body>
+</html>

@@ -243,32 +243,8 @@
     .divider::before { left: 0; }
     .divider::after  { right: 0; }
 
-    .roles-grid {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 10px;
-    }
-    .role-chip {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      padding: 10px 6px;
-      background: var(--input-bg);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--subtext);
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .role-chip:hover {
-      border-color: var(--teal);
-      color: var(--teal);
-      background: rgba(70,213,212,0.08);
-      transform: translateY(-2px);
-    }
+    
+    
     .role-chip span { font-size: 20px; }
 
     .card-footer {
@@ -330,20 +306,7 @@
       <button type="submit" class="btn-login" id="btn-signin">Sign In →</button>
     </form>
 
-    <div class="divider" id="divider-text">Login as</div>
-
-    <div class="roles-grid">
-      <div class="role-chip" onclick="fillDemo('admin','admin123')">
-        <span>🛡️</span><span id="role-admin">Admin</span>
-      </div>
-      <div class="role-chip" onclick="fillDemo('teacher1','pass123')">
-        <span>📚</span><span id="role-teacher">Teacher</span>
-      </div>
-      <div class="role-chip" onclick="fillDemo('student1','pass123')">
-        <span>🎒</span><span id="role-student">Student</span>
-      </div>
-      
-    </div>
+    
 
     <div class="card-footer" id="footer-text">
       <strong>Al-Fares</strong> © 2026 — Smart Education Platform
@@ -359,10 +322,7 @@
       document.getElementById('theme-text').textContent = isDark ? 'Dark Mode' : 'Light Mode';
     }
 
-    function fillDemo(user, pass) {
-      document.querySelector('input[name="username"]').value = user;
-      document.querySelector('input[name="password"]').value = pass;
-    }
+    
 
     let isArabic = false;
     function toggleLang() {
